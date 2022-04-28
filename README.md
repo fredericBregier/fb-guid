@@ -11,23 +11,27 @@ one being also **GUID**:
     values) using PID of Java Process, Timestamp (limited to 35 years rolling)
     and a counter to prevent millisecond collisions (total being 8 bytes)
   * `GUID` for all usages, local and distributed UUID (Global UUID as GUID), with
-    Tenant Id, Platform Id (based on specified value or MAC Address), PID of 
-    Java process, Timestamp (up to 925 years rolling) and and a counter to 
-    prevent millisecond collisions (total being 21 bytes) 
-* Simple integration with Jackon for the `GUID`
+    Tenant Id (4 bytes), Platform Id (based on specified value or MAC Address as
+    4 bytes), PID of Java process (as 3 bytes), Timestamp (up to 925 years 
+    rolling) and a counter to prevent millisecond collisions (total being 21 bytes) 
+  * `TinyGUID` for all usages, local and distributed UUID (Global UUID as GUID), with
+    Tenant Id (2 bytes), Platform Id (based on specified value or MAC Address and PID of
+    Java process in 4 bytes), Timestamp (up to 925 years rolling) and a counter to
+    prevent millisecond collisions (total being 16 bytes)
+* Simple integration with Jackon for the `GUID` and `TinyGUID` 
 * Base 64, 32, 16 and ARK representations
 
 ## Usage
 
-To create one GUID:
+To create one GUID or TinyGUID:
 ```java
 // for simple GUID with no Tenant and default Platform Id
 GUID guid = new GUID();
-// for simple GUID with one Tenant (0 <= long <= 2^30-1) 
+// for simple GUID with one Tenant (Long for GUID, Short for TinyGUID) 
 // and default Platform Id
 GUID guid = new GUID(tenantId);
-// for simple GUID with one Tenant (0 <= long <= 2^30) 
-// and a Platform Id (0 <= long <= 2^31-1)
+// for simple GUID with one Tenant (Long for GUID, Short for TinyGUID)
+// and a Platform Id (Long for both GUID and TinyGUID)
 GUID guid = new GUID(tenantId, platformId);
 ```
 Once the GUID is generated, one can get whatever representation he/she wants:
@@ -56,6 +60,14 @@ GUID guid2 = new GUID();
 guid.compareTo(guid2); // < 0 since guid generated before guid2
 // Comparison is: tenant first, then timestamp, then counter 
 ```
+
+## Benchmarks
+
+On a 4 vCPU with 10 concurrent threads:
+* IntegerUuid: 12 Millions/s for 4 bytes and very limited UUID
+* LongUuid: 12 Millions/s for 8 bytes and limited UUID
+* TinyGUID: 9 Millions/s for 16 bytes and valid GUID
+* GUID: 7.5 Millions/s for 21 bytes and full GUID
 
 ## Dependencies
 

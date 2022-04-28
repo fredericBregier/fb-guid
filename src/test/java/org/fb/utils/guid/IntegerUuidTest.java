@@ -155,7 +155,7 @@ public class IntegerUuidTest {
 
     long start = System.currentTimeMillis();
     for (int i = 0; i < numThreads; i++) {
-      threads[i] = new Generator(n / numThreads, uuids, i, numThreads);
+      threads[i] = new Generator(n / numThreads, uuids, i);
       threads[i].start();
     }
 
@@ -174,23 +174,22 @@ public class IntegerUuidTest {
     assertEquals(effectiveN, uuidSet.size());
   }
 
-  private static class Generator extends Thread {
+  static class Generator extends Thread {
     private final IntegerUuid[] uuids;
     int id;
     int n;
     int numThreads;
 
-    private Generator(int n, IntegerUuid[] uuids, int id, int numThreads) {
+    Generator(int n, IntegerUuid[] uuids, int id) {
       this.n = n;
       this.uuids = uuids;
-      this.id = id;
-      this.numThreads = numThreads;
+      this.id = id * n;
     }
 
     @Override
     public void run() {
       for (int i = 0; i < n; i++) {
-        uuids[numThreads * i + id] = new IntegerUuid();
+        uuids[id + i] = new IntegerUuid();
       }
     }
   }

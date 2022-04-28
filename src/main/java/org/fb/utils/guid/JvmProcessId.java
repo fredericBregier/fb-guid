@@ -57,26 +57,37 @@ public final class JvmProcessId {
    */
   static byte[] mac;
   static int macInt;
-  static byte jvmId;
+  static byte jvmByteId;
+  static int jvmIntegerId;
 
   static {
     JVMPID = jvmProcessId();
     mac = macAddress();
     macInt = macAddressAsInt();
-    jvmId = jvmInstanceId();
+    jvmIntegerId = jvmInstanceIdAsInteger();
+    jvmByteId = jvmInstanceIdAsByte();
   }
 
   private JvmProcessId() {
   }
 
   /**
-   * Use both PID and MAC address but as 8 bytes hash
+   * Use both PID and MAC address but as 8 bites hash
    *
    * @return one id as much as possible unique
    */
-  public static byte jvmInstanceId() {
+  public static byte jvmInstanceIdAsByte() {
+    return (byte) (Long.hashCode(jvmIntegerId) & 0xFF);
+  }
+
+  /**
+   * Use both PID and MAC address but as 4 bytes hash
+   *
+   * @return one id as much as possible unique
+   */
+  public static int jvmInstanceIdAsInteger() {
     final long id = 31L * jvmProcessId() + macAddressAsInt();
-    return (byte) (Long.hashCode(id) & 0xFF);
+    return Long.hashCode(id);
   }
 
   /**

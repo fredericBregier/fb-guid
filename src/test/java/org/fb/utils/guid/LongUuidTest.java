@@ -97,7 +97,7 @@ public class LongUuidTest {
   public void testPIDField() throws Exception {
     final LongUuid id = new LongUuid();
 
-    assertEquals(JvmProcessId.jvmInstanceId() >> 4 & 0x0F, id.getProcessId());
+    assertEquals(JvmProcessId.jvmInstanceIdAsByte() >> 4 & 0x0F, id.getProcessId());
   }
 
   @Test
@@ -229,12 +229,12 @@ public class LongUuidTest {
     }
   }
 
-  private static class Generator extends Thread {
+  static class Generator extends Thread {
     final int id;
     final int n;
     private final LongUuid[] uuids;
 
-    private Generator(final int n, final LongUuid[] uuids, final int id) {
+    Generator(final int n, final LongUuid[] uuids, final int id) {
       this.n = n;
       this.uuids = uuids;
       this.id = id * n;

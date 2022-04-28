@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Force sequence and take care of errors and improves some performance
  * issues.<br>
  * <br>
- * Limit is about 10 millions/s UUID and up to 2^32 values
+ * Benchmark is about 11 millions/s UUID and up to 2^32 values
  */
 public final class IntegerUuid {
   /**

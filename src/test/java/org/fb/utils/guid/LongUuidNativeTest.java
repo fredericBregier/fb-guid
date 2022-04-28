@@ -57,7 +57,7 @@ public class LongUuidNativeTest {
   public void testPIDField() throws Exception {
     final long id = LongUuid.getLongUuid();
     final LongUuid longUuid = new LongUuid(id);
-    assertEquals(JvmProcessId.jvmInstanceId() >> 4 & 0x0F,
+    assertEquals(JvmProcessId.jvmInstanceIdAsByte() >> 4 & 0x0F,
                  longUuid.getProcessId());
   }
 

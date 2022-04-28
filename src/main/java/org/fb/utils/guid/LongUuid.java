@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Timestamp. see https://github.com/groupon/locality-uuid.java <br>
  * <br>
  * But force sequence and take care of errors and improves some performance
- * issues (up to 1000 million/s, benchmakr shows about 13 millions/s
+ * issues (up to 1000 million/s, benchmakr shows about 12 millions/s
  * generated LongUuid).
  */
 public final class LongUuid {
@@ -87,7 +87,7 @@ public final class LongUuid {
     // Jvmd Id on 4 first bits
     // Timestamp on 40 bits (2^40 ms = 35 years rolling)
     // Count on 20 bits => 2^20 (1M / ms)
-    long uuidAsLong = (JvmProcessId.jvmId & 0xF0L) << 56;
+    long uuidAsLong = (JvmProcessId.jvmByteId & 0xF0L) << 56;
     uuidAsLong |= (time & 0xFFFFFFFFFFL) << 20;
     uuidAsLong |= count & 0xFFFFFL;
     return uuidAsLong;
