@@ -87,8 +87,7 @@ public class RandomUtilTest {
     assertTrue(emptySet.isEmpty());
     assertEquals(0, emptySet.size());
 
-    final Map<RandomUtilTest, RandomUtilTest> emptyMap =
-        SingletonUtils.singletonMap();
+    final Map<RandomUtilTest, RandomUtilTest> emptyMap = SingletonUtils.singletonMap();
     assertTrue(emptyMap.isEmpty());
     assertEquals(0, emptyMap.size());
     try {

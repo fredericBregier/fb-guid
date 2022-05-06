@@ -6,7 +6,7 @@
 
   <groupId>org.fb</groupId>
   <artifactId>guid</artifactId>
-  <version>1.1</version>
+  <version>1.2</version>
   <inceptionYear>2019</inceptionYear>
   <description>Efficient GUID implementation</description>
   <licenses>

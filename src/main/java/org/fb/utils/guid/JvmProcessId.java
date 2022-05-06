@@ -41,8 +41,7 @@ public final class JvmProcessId {
   /**
    * Definition for Machine Id replacing MAC address
    */
-  private static final Pattern MACHINE_ID_PATTERN =
-      Pattern.compile("^(?:[0-9a-fA-F][:-]?){6,8}$");
+  private static final Pattern MACHINE_ID_PATTERN = Pattern.compile("^(?:[0-9a-fA-F][:-]?){6,8}$");
   private static final int MACHINE_ID_LEN = 6;
   /**
    * MAX value on 3 bytes (64 system use 2^22 id)
@@ -56,16 +55,20 @@ public final class JvmProcessId {
    * Try to get Mac Address but could be also changed dynamically
    */
   static byte[] mac;
+  static long macLong;
   static int macInt;
   static byte jvmByteId;
   static int jvmIntegerId;
+  static long jvmLongId;
 
   static {
     JVMPID = jvmProcessId();
     mac = macAddress();
+    macLong = macAddressAsLong();
     macInt = macAddressAsInt();
     jvmIntegerId = jvmInstanceIdAsInteger();
     jvmByteId = jvmInstanceIdAsByte();
+    jvmLongId = jvmInstanceIdAsLong();
   }
 
   private JvmProcessId() {
@@ -77,7 +80,7 @@ public final class JvmProcessId {
    * @return one id as much as possible unique
    */
   public static byte jvmInstanceIdAsByte() {
-    return (byte) (Long.hashCode(jvmIntegerId) & 0xFF);
+    return (byte) (Integer.hashCode(jvmIntegerId) & 0xFF);
   }
 
   /**
@@ -99,8 +102,7 @@ public final class JvmProcessId {
     try {
       final ClassLoader loader = getSystemClassLoader();
       String value;
-      value =
-          jvmProcessIdManagementFactory(loader, EMPTY_OBJECTS, EMPTY_CLASSES);
+      value = jvmProcessIdManagementFactory(loader, EMPTY_OBJECTS, EMPTY_CLASSES);
       final int atIndex = value.indexOf('@');
       if (atIndex >= 0) {
         value = value.substring(0, atIndex);
@@ -121,8 +123,7 @@ public final class JvmProcessId {
    * @return MAC address as int (truncated to 4 bytes instead of 6)
    */
   public static int macAddressAsInt() {
-    return (mac[3] & 0xFF) << 24 | (mac[2] & 0xFF) << 16 |
-           (mac[1] & 0xFF) << 8 | mac[0] & 0xFF;
+    return (mac[3] & 0xFF) << 24 | (mac[2] & 0xFF) << 16 | (mac[1] & 0xFF) << 8 | mac[0] & 0xFF;
   }
 
   private static ClassLoader getSystemClassLoader() {
@@ -132,37 +133,29 @@ public final class JvmProcessId {
   /**
    * @return the processId as String
    */
-  private static String jvmProcessIdManagementFactory(final ClassLoader loader,
-                                                      final Object[] emptyObjects,
+  private static String jvmProcessIdManagementFactory(final ClassLoader loader, final Object[] emptyObjects,
                                                       final Class<?>[] emptyClasses) {
     String value;
     try {
       // Invoke
       // java.lang.management.ManagementFactory.getRuntimeMXBean().getName()
-      final Class<?> mgmtFactoryType =
-          Class.forName("java.lang.management.ManagementFactory", true, loader);
-      final Class<?> runtimeMxBeanType =
-          Class.forName("java.lang.management.RuntimeMXBean", true, loader);
+      final Class<?> mgmtFactoryType = Class.forName("java.lang.management.ManagementFactory", true, loader);
+      final Class<?> runtimeMxBeanType = Class.forName("java.lang.management.RuntimeMXBean", true, loader);
 
-      final Method getRuntimeMXBean =
-          mgmtFactoryType.getMethod("getRuntimeMXBean", emptyClasses);
+      final Method getRuntimeMXBean = mgmtFactoryType.getMethod("getRuntimeMXBean", emptyClasses);
       final Object bean = getRuntimeMXBean.invoke(null, emptyObjects);
-      final Method getName =
-          runtimeMxBeanType.getDeclaredMethod("getName", emptyClasses);
+      final Method getName = runtimeMxBeanType.getDeclaredMethod("getName", emptyClasses);
       value = (String) getName.invoke(bean, emptyObjects);
     } catch (final Exception e) {
-      SysErrLogger.FAKE_LOGGER.syserr(
-          "Unable to get PID, try another way: " + e.getMessage());
+      SysErrLogger.FAKE_LOGGER.syserr("Unable to get PID, try another way: " + e.getMessage());
 
       try {
         // Invoke android.os.Process.myPid()
-        final Class<?> processType =
-            Class.forName("android.os.Process", true, loader);
+        final Class<?> processType = Class.forName("android.os.Process", true, loader);
         final Method myPid = processType.getMethod("myPid", emptyClasses);
         value = myPid.invoke(null, emptyObjects).toString();
       } catch (final Exception e2) {
-        SysErrLogger.FAKE_LOGGER.syserr(
-            "Unable to get PID: " + e2.getMessage());
+        SysErrLogger.FAKE_LOGGER.syserr("Unable to get PID: " + e2.getMessage());
         value = "";
       }
     }
@@ -172,8 +165,7 @@ public final class JvmProcessId {
   /**
    * @return the processId
    */
-  private static int parseProcessId(final int oldProcessId,
-                                    final String customProcessId) {
+  private static int parseProcessId(final int oldProcessId, final String customProcessId) {
     int processId = oldProcessId;
     try {
       processId = Integer.parseInt(customProcessId);
@@ -187,14 +179,30 @@ public final class JvmProcessId {
   }
 
   /**
+   * Use both PID (2 bytes at must) and MAC address
+   *
+   * @return one id as much as possible unique
+   */
+  public static long jvmInstanceIdAsLong() {
+    return (jvmProcessId() << 6 * 8 & 0xFFFF) + macAddressAsLong();
+  }
+
+  /**
+   * @return MAC address as long (6 bytes only)
+   */
+  public static long macAddressAsLong() {
+    return (long) (mac[5] & 0xFF) << 40 | (long) (mac[4] & 0xFF) << 32 | (long) (mac[3] & 0xFF) << 24 |
+           (mac[2] & 0xFF) << 16 | (mac[1] & 0xFF) << 8 | mac[0] & 0xFF;
+  }
+
+  /**
    * @return the mac address if possible, else random values
    */
   public static byte[] macAddress() {
     try {
       byte[] machineId = null;
       final String customMachineId = getMachineId();
-      if (customMachineId != null &&
-          MACHINE_ID_PATTERN.matcher(customMachineId).matches()) {
+      if (customMachineId != null && MACHINE_ID_PATTERN.matcher(customMachineId).matches()) {
         machineId = parseMachineId(customMachineId);
       }
 
@@ -234,8 +242,8 @@ public final class JvmProcessId {
     // Retrieve the list of available network interfaces.
     final Map<NetworkInterface, InetAddress> ifaces = new LinkedHashMap<>();
     try {
-      for (final Enumeration<NetworkInterface> i =
-           NetworkInterface.getNetworkInterfaces(); i.hasMoreElements(); ) {
+      for (final Enumeration<NetworkInterface> i = NetworkInterface.getNetworkInterfaces();
+           i.hasMoreElements(); ) {
         final NetworkInterface iface = i.nextElement();
         // Use the interface with proper INET addresses only.
         final Enumeration<InetAddress> addrs = iface.getInetAddresses();
@@ -295,8 +303,7 @@ public final class JvmProcessId {
    * @return positive - current is better, 0 - cannot tell from MAC addr,
    *     negative - candidate is better.
    */
-  private static int compareAddresses(final byte[] current,
-                                      final byte[] candidate) {
+  private static int compareAddresses(final byte[] current, final byte[] candidate) {
     if (candidate == null) {
       return 1;
     }
@@ -344,8 +351,7 @@ public final class JvmProcessId {
    *     candidate
    *     is better
    */
-  private static int compareAddresses(final InetAddress current,
-                                      final InetAddress candidate) {
+  private static int compareAddresses(final InetAddress current, final InetAddress candidate) {
     return scoreAddress(current) - scoreAddress(candidate);
   }
 

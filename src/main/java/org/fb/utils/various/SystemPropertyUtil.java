@@ -31,11 +31,9 @@ public final class SystemPropertyUtil {
   // Since logger could be not available yet, one must not declare there a Logger
 
   public static final String MACHINE_ID = "org.fb.utils.machineId";
-  private static final String USING_THE_DEFAULT_VALUE2 =
-      "using the default value: ";
+  private static final String USING_THE_DEFAULT_VALUE2 = "using the default value: ";
   private static final String FIND_0_9 = "-?\\d+";
-  private static final String USING_THE_DEFAULT_VALUE =
-      USING_THE_DEFAULT_VALUE2;
+  private static final String USING_THE_DEFAULT_VALUE = USING_THE_DEFAULT_VALUE2;
   private static final Properties PROPS = new Properties();
   private static final String INVALID_PROPERTY = "Invalid property ";
   private static final Pattern COMPILE_0_9 = Pattern.compile(FIND_0_9);
@@ -52,8 +50,6 @@ public final class SystemPropertyUtil {
   private SystemPropertyUtil() {
     // Unused
   }
-
-  private static final Platform mOs = getOS();
 
   /**
    * Returns the value of the Java system property with the specified {@code
@@ -86,8 +82,8 @@ public final class SystemPropertyUtil {
     }
 
     SysErrLogger.FAKE_LOGGER.syserr(
-        "Unable to parse the boolean system property '" + key + "':" + value +
-        " - " + USING_THE_DEFAULT_VALUE2 + def);
+        "Unable to parse the boolean system property '" + key + "':" + value + " - " +
+        USING_THE_DEFAULT_VALUE2 + def);
 
     return def;
   }
@@ -119,11 +115,11 @@ public final class SystemPropertyUtil {
     }
 
     SysErrLogger.FAKE_LOGGER.syserr(
-        "Unable to parse the integer system property '" + key + "':" + value +
-        " - " + USING_THE_DEFAULT_VALUE2 + def);
+        "Unable to parse the integer system property '" + key + "':" + value + " - " +
+        USING_THE_DEFAULT_VALUE2 + def);
 
     return def;
-  }
+  }  private static final Platform mOs = getOS();
 
   /**
    * Returns the value of the Java system property with the specified {@code
@@ -152,8 +148,8 @@ public final class SystemPropertyUtil {
     }
 
     SysErrLogger.FAKE_LOGGER.syserr(
-        "Unable to parse the long integer system property '" + key + "':" +
-        value + " - " + USING_THE_DEFAULT_VALUE2 + def);
+        "Unable to parse the long integer system property '" + key + "':" + value + " - " +
+        USING_THE_DEFAULT_VALUE2 + def);
 
     return def;
   }
@@ -196,8 +192,7 @@ public final class SystemPropertyUtil {
     } catch (final SecurityException e) {
       SysErrLogger.FAKE_LOGGER.ignoreLog(e);
       SysErrLogger.FAKE_LOGGER.syserr(
-          "Unable to retrieve the system properties; default values will be used: " +
-          e.getMessage());
+          "Unable to retrieve the system properties; default values will be used: " + e.getMessage());
       newProps = new Properties();
     }
 
@@ -343,8 +338,8 @@ public final class SystemPropertyUtil {
       return def;
     }
     SysErrLogger.FAKE_LOGGER.syserr(
-        "Unable to parse the boolean system property '" + key + "':" + value +
-        " - " + USING_THE_DEFAULT_VALUE + def);
+        "Unable to parse the boolean system property '" + key + "':" + value + " - " +
+        USING_THE_DEFAULT_VALUE + def);
 
     return def;
   }
@@ -411,8 +406,8 @@ public final class SystemPropertyUtil {
       return def;
     }
     SysErrLogger.FAKE_LOGGER.syserr(
-        "Unable to parse the integer system property '" + key + "':" + value +
-        " - " + USING_THE_DEFAULT_VALUE + def);
+        "Unable to parse the integer system property '" + key + "':" + value + " - " +
+        USING_THE_DEFAULT_VALUE + def);
 
     return def;
   }
@@ -480,8 +475,8 @@ public final class SystemPropertyUtil {
     }
 
     SysErrLogger.FAKE_LOGGER.syserr(
-        "Unable to parse the long integer system property '" + key + "':" +
-        value + " - " + USING_THE_DEFAULT_VALUE + def);
+        "Unable to parse the long integer system property '" + key + "':" + value + " - " +
+        USING_THE_DEFAULT_VALUE + def);
 
     return def;
   }
@@ -700,6 +695,8 @@ public final class SystemPropertyUtil {
      */
     UNSUPPORTED
   }
+
+
 
 
 }

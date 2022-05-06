@@ -45,8 +45,7 @@ public final class SystemRandomSecure {
       }
     } catch (final Throwable throwable) {//NOSONAR
       SysErrLogger.FAKE_LOGGER.syserr("Error occurs at startup: " +//NOSONAR
-                                      throwable.getMessage(),
-                                      throwable);//NOSONAR
+                                      throwable.getMessage(), throwable);//NOSONAR
     }
   }
 
@@ -72,15 +71,15 @@ public final class SystemRandomSecure {
         final String name = String.format("%s.%s", type, alg);
         final Provider.Service service = provider.getService(type, alg);
         if (service != null) {
-          Security.insertProviderAt(new Provider(name, provider.getVersion(),
-                                                 "FB quick fix for SecureRandom using urandom") {
-            private static final long serialVersionUID = 1001L;
+          Security.insertProviderAt(
+              new Provider(name, provider.getVersion(), "FB quick fix for SecureRandom using urandom") {
+                private static final long serialVersionUID = 1001L;
 
-            {
-              System.setProperty(name, service.getClassName());
-            }
+                {
+                  System.setProperty(name, service.getClassName());
+                }
 
-          }, 1);
+              }, 1);
           specialSecureRandom = true;
         }
       }

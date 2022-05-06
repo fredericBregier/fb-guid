@@ -15,6 +15,7 @@
  */
 package org.fb.utils.guid;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.fb.utils.exceptions.InvalidArgumentRuntimeException;
 import org.fb.utils.json.JsonHandler;
 import org.fb.utils.various.TestWatcherJunit4;
@@ -32,8 +33,7 @@ public class TinyGUIDTest {
   private static final int NB = 1000000;
   private static final String WRONG_ARK3 = "ark:/10a/aiaaabaaagahepcz6ryzyqa";
   private static final String WRONG_ARK2 = "ark:/10aiaaabaaagahepcz6ryzyqa";
-  private static final String WRONG_ARK1 =
-      "ark:/10/aiaaabaaagahepcz6ryzyqaaaa";
+  private static final String WRONG_ARK1 = "ark:/10/aiaaabaaagahepcz6ryzyqaaaa";
   private static final byte[] WRONG_BYTES = {
       2, 0, 10, 0, 0, 4, 0, 1, -128, 114, 60, 89, -12, 113, -100
   };
@@ -43,8 +43,7 @@ public class TinyGUIDTest {
   private static final byte[] WRONG_BYTES3 = {
       2, 0, 10, 0, 0, 4, 0, 1, -128, 114, 60, 89, -12, 113, -100, 64, 12
   };
-  private static final String WRONG_STRING_ID =
-      "02000a000004000180723c59f4719c40a";
+  private static final String WRONG_STRING_ID = "02000a000004000180723c59f4719c40a";
   private static final String BASE16 = "02000a000004000180723c59f4719c40";
   private static final String BASE32 = "aiaauaaaaqaadadshrm7i4m4ia";
   private static final String BASE64 = "AgAKAAAEAAGAcjxZ9HGcQA";
@@ -71,15 +70,13 @@ public class TinyGUIDTest {
       id = new TinyGUID();
       assertEquals(VERSION, id.getVersion());
       assertEquals(0, id.getTenantId());
-      assertEquals(JvmProcessId.jvmInstanceIdAsInteger() & 0x7FFFFFFF,
-                   id.getPlatformId());
+      assertEquals(JvmProcessId.jvmInstanceIdAsInteger() & 0x7FFFFFFF, id.getPlatformId());
       byte[] platformId = id.getPlatformIdAsBytes();
 
       id = new TinyGUID(100);
       assertEquals(VERSION, id.getVersion());
       assertEquals(100, id.getTenantId());
-      assertEquals(JvmProcessId.jvmInstanceIdAsInteger() & 0x7FFFFFFF,
-                   id.getPlatformId());
+      assertEquals(JvmProcessId.jvmInstanceIdAsInteger() & 0x7FFFFFFF, id.getPlatformId());
       assertArrayEquals(platformId, id.getPlatformIdAsBytes());
 
       id = new TinyGUID(100, 999);
@@ -186,13 +183,13 @@ public class TinyGUIDTest {
   }
 
   @Test
-  public void testJson() {
+  public void testJson() throws JsonProcessingException {
     TinyGUID tinyGUID;
     try {
       tinyGUID = new TinyGUID(10, 1024);
       System.out.println(
-          "Hex: " + tinyGUID.toHex() + " B32: " + tinyGUID.toBase32() +
-          " B64:" + tinyGUID.toBase64() + " Ark:" + tinyGUID.toArk());
+          "Hex: " + tinyGUID.toHex() + " B32: " + tinyGUID.toBase32() + " B64:" + tinyGUID.toBase64() +
+          " Ark:" + tinyGUID.toArk());
       byte[] bytes = tinyGUID.getBytes();
       for (int i = 0; i < bytes.length; i++) {
         System.out.print((int) bytes[i] + " ");
@@ -283,9 +280,7 @@ public class TinyGUIDTest {
       threads[i].join();
     }
     final long stop = System.currentTimeMillis();
-    System.out.println(
-        "Time = " + (stop - start) + " so " + n / (stop - start) * 1000 +
-        " Uuids/s");
+    System.out.println("Time = " + (stop - start) + " so " + n / (stop - start) * 1000 + " Uuids/s");
 
     final Set<TinyGUID> uuidSet = new HashSet<TinyGUID>(effectiveN);
     uuidSet.addAll(Arrays.asList(uuids));

@@ -27,6 +27,8 @@ import org.fb.utils.various.SingletonUtils;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.fb.utils.guid.GuidFactory.*;
+
 /**
  * GUID implementation using 21 bytes:<br>
  * - 1 bytes = Version (8)<br>
@@ -48,10 +50,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
 public final class GUID implements Comparable<GUID> {
   /**
-   * ARK header
-   */
-  public static final String ARK = "ark:/";
-  /**
    * Native size of the GUID
    */
   static final int KEYSIZE = 21;
@@ -60,29 +58,25 @@ public final class GUID implements Comparable<GUID> {
   static final int KEYB16SIZE = KEYSIZE * 2;
   static final int HEADER_POS = 0;
   static final int HEADER_SIZE = 1;
-  static final int TENANT_POS = HEADER_POS + HEADER_SIZE;
   static final int TENANT_SIZE = 4;
-  static final int PLATFORM_POS = TENANT_POS + TENANT_SIZE;
   static final int PLATFORM_SIZE = 4;
-  static final int PID_POS = PLATFORM_POS + PLATFORM_SIZE;
   static final int PID_SIZE = 3;
-  static final int TIME_POS = PID_POS + PID_SIZE;
   static final int TIME_SIZE = 6;
-  static final int COUNTER_POS = TIME_POS + TIME_SIZE;
   static final int COUNTER_SIZE = 3;
-  public static final int BYTE_MASK = 0xFF;
+  static final int TENANT_POS = HEADER_POS + HEADER_SIZE;
+  static final int PLATFORM_POS = TENANT_POS + TENANT_SIZE;
+  static final int PID_POS = PLATFORM_POS + PLATFORM_SIZE;
+  static final int TIME_POS = PID_POS + PID_SIZE;
+  static final int COUNTER_POS = TIME_POS + TIME_SIZE;
   /**
    * Version to store (to check correctness if future algorithm) between 0 and
    * 255
    */
   static final int VERSION = 1 & BYTE_MASK;
-  static final int BYTE_SIZE = 8;
-  private static final String ATTEMPTED_TO_PARSE_MALFORMED_ARK_GUID =
-      "Attempted to parse malformed ARK GUID: ";
   /**
    * Bits size of Counter
    */
-  private static final int SIZE_COUNTER = COUNTER_SIZE * 8;
+  private static final int SIZE_COUNTER = COUNTER_SIZE * BYTE_SIZE;
   /**
    * Max Counter value
    */
@@ -95,9 +89,6 @@ public final class GUID implements Comparable<GUID> {
    * Counter part
    */
   private static final AtomicInteger COUNTER = new AtomicInteger(MIN_COUNTER);
-  private static final int MIN_INT = -2147483648;
-  private static final int MAX_INT = 2147483647;
-  private static final int MASK_INT = 0xFFFFFFFF;
   /**
    * real GUID
    */
@@ -116,13 +107,11 @@ public final class GUID implements Comparable<GUID> {
       throw new InvalidArgumentRuntimeException("Empty argument");
     }
     if (bytes.length < KEYSIZE) {
-      throw new InvalidArgumentRuntimeException(
-          "Attempted to parse malformed GUID: (" + bytes.length + ')');
+      throw new InvalidArgumentRuntimeException("Attempted to parse malformed GUID: (" + bytes.length + ')');
     }
     System.arraycopy(bytes, 0, bguid, 0, KEYSIZE);
     if (getVersion() != VERSION) {
-      throw new InvalidArgumentRuntimeException(
-          "Version is incorrect: " + getVersion());
+      throw new InvalidArgumentRuntimeException("Version is incorrect: " + getVersion());
     }
   }
 
@@ -144,8 +133,7 @@ public final class GUID implements Comparable<GUID> {
   public GUID(final String idsource) {
     setString(idsource);
     if (getVersion() != VERSION) {
-      throw new InvalidArgumentRuntimeException(
-          "Version is incorrect: " + getVersion());
+      throw new InvalidArgumentRuntimeException("Version is incorrect: " + getVersion());
     }
   }
 
@@ -160,27 +148,24 @@ public final class GUID implements Comparable<GUID> {
       throw new InvalidArgumentRuntimeException("Empty argument");
     }
     final String id = idsource.trim();
-    if (idsource.startsWith(ARK)) {
-      String ids = idsource;
+    if (id.startsWith(ARK)) {
+      String ids = id;
       ids = ids.substring(ARK.length());
       final int separator = ids.indexOf('/');
       if (separator <= 0) {
-        throw new InvalidArgumentRuntimeException(
-            ATTEMPTED_TO_PARSE_MALFORMED_ARK_GUID + id);
+        throw new InvalidArgumentRuntimeException(ATTEMPTED_TO_PARSE_MALFORMED_ARK_GUID + id);
       }
       int tenantId;
       try {
         tenantId = Integer.parseInt(ids.substring(0, separator));
       } catch (final NumberFormatException e) {
-        throw new InvalidArgumentRuntimeException(
-            ATTEMPTED_TO_PARSE_MALFORMED_ARK_GUID + id);
+        throw new InvalidArgumentRuntimeException(ATTEMPTED_TO_PARSE_MALFORMED_ARK_GUID + id);
       }
       // BASE32
       ids = ids.substring(separator + 1);
       final byte[] base32 = BaseXx.getFromBase32(ids);
       if (base32.length != KEYSIZE - TENANT_SIZE) {
-        throw new InvalidArgumentRuntimeException(
-            ATTEMPTED_TO_PARSE_MALFORMED_ARK_GUID + id);
+        throw new InvalidArgumentRuntimeException(ATTEMPTED_TO_PARSE_MALFORMED_ARK_GUID + id);
       }
       System.arraycopy(base32, 0, bguid, HEADER_POS, HEADER_SIZE);
       // GUID Domain default to 0 (from 0 to 2^30-1)
@@ -200,21 +185,18 @@ public final class GUID implements Comparable<GUID> {
     try {
       if (len == KEYB16SIZE) {
         // HEXA BASE16
-        System.arraycopy(BaseXx.getFromBase16(idsource), 0, bguid, 0, KEYSIZE);
+        System.arraycopy(BaseXx.getFromBase16(id), 0, bguid, 0, KEYSIZE);
       } else if (len == KEYB32SIZE) {
         // BASE32
-        System.arraycopy(BaseXx.getFromBase32(idsource), 0, bguid, 0, KEYSIZE);
+        System.arraycopy(BaseXx.getFromBase32(id), 0, bguid, 0, KEYSIZE);
       } else if (len == KEYB64SIZE) {
         // BASE64
-        System.arraycopy(BaseXx.getFromBase64UrlWithoutPadding(idsource), 0,
-                         bguid, 0, KEYSIZE);
+        System.arraycopy(BaseXx.getFromBase64(id), 0, bguid, 0, KEYSIZE);
       } else {
-        throw new InvalidArgumentRuntimeException(
-            "Attempted to parse malformed GUID: (" + len + ") " + id);
+        throw new InvalidArgumentRuntimeException("Attempted to parse malformed GUID: (" + len + ") " + id);
       }
     } catch (final IllegalArgumentException e) {
-      throw new InvalidArgumentRuntimeException(
-          "Attempted to parse malformed GUID: " + id, e);
+      throw new InvalidArgumentRuntimeException("Attempted to parse malformed GUID: " + id, e);
     }
     return this;
   }
@@ -225,19 +207,6 @@ public final class GUID implements Comparable<GUID> {
    */
   public GUID() {
     this(0, JvmProcessId.macAddressAsInt() & MASK_INT);
-  }
-
-  /**
-   * Constructor that generates a new GUID using the current process id,
-   * Platform Id and timestamp with no tenant
-   *
-   * @param tenantId tenant id between -2^31 and 2^31-1
-   *
-   * @throws InvalidArgumentRuntimeException if any of the argument are out
-   *     of range
-   */
-  public GUID(final int tenantId) {
-    this(tenantId, JvmProcessId.macAddressAsInt() & MASK_INT);
   }
 
   /**
@@ -252,12 +221,10 @@ public final class GUID implements Comparable<GUID> {
    */
   public GUID(final int tenantId, final int platformId) {
     if (tenantId < MIN_INT || tenantId > MAX_INT) {
-      throw new InvalidArgumentRuntimeException(
-          "TenantId must be between -2^31 and 2^31-1: " + tenantId);
+      throw new InvalidArgumentRuntimeException("TenantId must be between -2^31 and 2^31-1: " + tenantId);
     }
     if (platformId < MIN_INT || platformId > MAX_INT) {
-      throw new InvalidArgumentRuntimeException(
-          "PlatformId must be -2^31 and 2^31-1: " + platformId);
+      throw new InvalidArgumentRuntimeException("PlatformId must be -2^31 and 2^31-1: " + platformId);
     }
 
     // atomically
@@ -328,6 +295,19 @@ public final class GUID implements Comparable<GUID> {
   }
 
   /**
+   * Constructor that generates a new GUID using the current process id,
+   * Platform Id and timestamp with no tenant
+   *
+   * @param tenantId tenant id between -2^31 and 2^31-1
+   *
+   * @throws InvalidArgumentRuntimeException if any of the argument are out
+   *     of range
+   */
+  public GUID(final int tenantId) {
+    this(tenantId, JvmProcessId.macAddressAsInt() & MASK_INT);
+  }
+
+  /**
    * @return the KeySize
    */
   public static int getKeySize() {
@@ -339,7 +319,7 @@ public final class GUID implements Comparable<GUID> {
    */
   @JsonIgnore
   public String toBase64() {
-    return BaseXx.getBase64UrlWithoutPadding(bguid);
+    return BaseXx.getBase64(bguid);
   }
 
   /**
@@ -355,8 +335,7 @@ public final class GUID implements Comparable<GUID> {
    */
   @JsonIgnore
   public String toArk() {
-    return new StringBuilder(ARK).append(getTenantId()).append('/')
-                                 .append(toArkName()).toString();
+    return new StringBuilder(ARK).append(getTenantId()).append('/').append(toArkName()).toString();
   }
 
   /**
@@ -366,8 +345,7 @@ public final class GUID implements Comparable<GUID> {
   public int getTenantId() {
     return (bguid[TENANT_POS] & BYTE_MASK) << BYTE_SIZE * 3 |
            (bguid[TENANT_POS + 1] & BYTE_MASK) << BYTE_SIZE * 2 |
-           (bguid[TENANT_POS + 2] & BYTE_MASK) << BYTE_SIZE |
-           bguid[TENANT_POS + 3] & BYTE_MASK;
+           (bguid[TENANT_POS + 2] & BYTE_MASK) << BYTE_SIZE | bguid[TENANT_POS + 3] & BYTE_MASK;
   }
 
   /**
@@ -411,8 +389,7 @@ public final class GUID implements Comparable<GUID> {
   public int getPlatformId() {
     return (bguid[PLATFORM_POS] & BYTE_MASK) << BYTE_SIZE * 3 |
            (bguid[PLATFORM_POS + 1] & BYTE_MASK) << BYTE_SIZE * 2 |
-           (bguid[PLATFORM_POS + 2] & BYTE_MASK) << BYTE_SIZE |
-           bguid[PLATFORM_POS + 3] & BYTE_MASK;
+           (bguid[PLATFORM_POS + 2] & BYTE_MASK) << BYTE_SIZE | bguid[PLATFORM_POS + 3] & BYTE_MASK;
   }
 
   /**
@@ -446,8 +423,7 @@ public final class GUID implements Comparable<GUID> {
     if (getVersion() != VERSION) {
       return -1;
     }
-    return (bguid[PID_POS] & BYTE_MASK) << BYTE_SIZE * 2 |
-           (bguid[PID_POS + 1] & BYTE_MASK) << BYTE_SIZE |
+    return (bguid[PID_POS] & BYTE_MASK) << BYTE_SIZE * 2 | (bguid[PID_POS + 1] & BYTE_MASK) << BYTE_SIZE |
            bguid[PID_POS + 2] & BYTE_MASK;
   }
 
@@ -513,8 +489,7 @@ public final class GUID implements Comparable<GUID> {
   @JsonIgnore
   public int getCounter() {
     return (bguid[COUNTER_POS] & BYTE_MASK) << BYTE_SIZE * 2 |
-           (bguid[COUNTER_POS + 1] & BYTE_MASK) << BYTE_SIZE |
-           bguid[COUNTER_POS + 2] & BYTE_MASK;
+           (bguid[COUNTER_POS + 1] & BYTE_MASK) << BYTE_SIZE | bguid[COUNTER_POS + 2] & BYTE_MASK;
   }
 
   /**

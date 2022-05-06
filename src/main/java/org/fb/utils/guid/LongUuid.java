@@ -118,8 +118,7 @@ public final class LongUuid {
     final String id = idsource.trim();
 
     if (id.length() != UUIDSIZE * 2) {
-      throw new InvalidArgumentRuntimeException(
-          "Attempted to parse malformed UUID: " + id);
+      throw new InvalidArgumentRuntimeException("Attempted to parse malformed UUID: " + id);
     }
     System.arraycopy(BaseXx.getFromBase16(id), 0, uuid, 0, UUIDSIZE);
   }

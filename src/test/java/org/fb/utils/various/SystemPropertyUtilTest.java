@@ -70,8 +70,7 @@ public class SystemPropertyUtilTest {
   public final void testSystemPropertyBoolean() {
     SystemPropertyUtil.set(KEY_BTEST, KEY_BVALUE);
     assertTrue(SystemPropertyUtil.contains(KEY_BTEST));
-    assertEquals(Boolean.toString(KEY_BVALUE),
-                 SystemPropertyUtil.get(KEY_BTEST));
+    assertEquals(Boolean.toString(KEY_BVALUE), SystemPropertyUtil.get(KEY_BTEST));
     assertEquals(KEY_BVALUE, SystemPropertyUtil.get(KEY_BTEST, false));
     assertEquals(KEY_BVALUE, SystemPropertyUtil.getAndSet(KEY_BTEST, false));
     assertFalse(SystemPropertyUtil.getAndSet(KEY_BTEST + '2', false));
@@ -93,8 +92,7 @@ public class SystemPropertyUtilTest {
   public final void testSystemPropertyInt() {
     SystemPropertyUtil.set(KEY_ITEST, KEY_IVALUE);
     assertTrue(SystemPropertyUtil.contains(KEY_ITEST));
-    assertEquals(Integer.toString(KEY_IVALUE),
-                 SystemPropertyUtil.get(KEY_ITEST));
+    assertEquals(Integer.toString(KEY_IVALUE), SystemPropertyUtil.get(KEY_ITEST));
     assertEquals(KEY_IVALUE, SystemPropertyUtil.get(KEY_ITEST, 4));
     assertEquals(KEY_IVALUE, SystemPropertyUtil.getAndSet(KEY_ITEST, 4));
     assertEquals(4, SystemPropertyUtil.getAndSet(KEY_ITEST + '2', 4));

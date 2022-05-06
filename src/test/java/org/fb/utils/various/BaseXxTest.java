@@ -43,18 +43,12 @@ public class BaseXxTest {
     fail("EXPECTING_EXCEPTION_ILLEGAL_ARGUMENT_EXCEPTION");
   }
 
-  @Test(expected = InvalidArgumentRuntimeException.class)
-  public void testBase64() throws IOException {
-    BaseXx.getBase64UrlWithoutPadding(null);
-    fail("EXPECTING_EXCEPTION_ILLEGAL_ARGUMENT_EXCEPTION");
-  }
 
   @Test(expected = InvalidArgumentRuntimeException.class)
-  public void testBase64UrlPadding() throws IOException {
-    BaseXx.getBase64UrlWithPadding(null);
+  public void testBase64() throws FileNotFoundException {
+    BaseXx.getBase64(null);
     fail("EXPECTING_EXCEPTION_ILLEGAL_ARGUMENT_EXCEPTION");
   }
-
 
   @Test(expected = InvalidArgumentRuntimeException.class)
   public void testFromBase16() throws IOException {
@@ -69,44 +63,18 @@ public class BaseXxTest {
   }
 
   @Test(expected = InvalidArgumentRuntimeException.class)
-  public void testFromBase64() throws IOException {
-    BaseXx.getFromBase64UrlWithoutPadding(null);
-    fail("EXPECTING_EXCEPTION_ILLEGAL_ARGUMENT_EXCEPTION");
-  }
-
-  @Test(expected = InvalidArgumentRuntimeException.class)
-  public void testFromBase64Padding() throws IOException {
-    BaseXx.getFromBase64UrlPadding(null);
+  public void testFromBase64() throws FileNotFoundException {
+    BaseXx.getFromBase64(null);
     fail("EXPECTING_EXCEPTION_ILLEGAL_ARGUMENT_EXCEPTION");
   }
 
   @Test
-  public void testBase64UrlPaddingOK() throws IOException {
-    final String encoded =
-        BaseXx.getBase64UrlWithPadding("FBTest64P".getBytes());
-    assertNotNull(encoded);
-    final byte[] bytes = BaseXx.getFromBase64UrlPadding(encoded);
-    assertNotNull(bytes);
-    assertArrayEquals(bytes, "FBTest64P".getBytes());
-  }
-
-  @Test
-  public void testBase64PaddingOK() throws IOException {
+  public void testBase64OK() throws IOException {
     final String encoded = BaseXx.getBase64("FBTest64P".getBytes());
     assertNotNull(encoded);
     final byte[] bytes = BaseXx.getFromBase64(encoded);
     assertNotNull(bytes);
     assertArrayEquals(bytes, "FBTest64P".getBytes());
-  }
-
-  @Test
-  public void testBase64UrlWithoutPaddingOK() throws IOException {
-    final String encoded =
-        BaseXx.getBase64UrlWithoutPadding("FBTest64".getBytes());
-    assertNotNull(encoded);
-    final byte[] bytes = BaseXx.getFromBase64UrlWithoutPadding(encoded);
-    assertNotNull(bytes);
-    assertArrayEquals(bytes, "FBTest64".getBytes());
   }
 
   @Test
@@ -127,4 +95,33 @@ public class BaseXxTest {
     assertArrayEquals(bytes, "FBTest16".getBytes());
   }
 
+  @Test
+  public void testVariousBase16() {
+    for (int i = 1; i < 100; i++) {
+      final byte[] bytes = RandomUtil.getRandom(i);
+      final String base = BaseXx.getBase16(bytes);
+      final byte[] decoded = BaseXx.getFromBase16(base);
+      assertArrayEquals(bytes, decoded);
+    }
+  }
+
+  @Test
+  public void testVariousBase32() {
+    for (int i = 1; i < 100; i++) {
+      final byte[] bytes = RandomUtil.getRandom(i);
+      final String base = BaseXx.getBase32(bytes);
+      final byte[] decoded = BaseXx.getFromBase32(base);
+      assertArrayEquals(bytes, decoded);
+    }
+  }
+
+  @Test
+  public void testVariousBase64() {
+    for (int i = 1; i < 100; i++) {
+      final byte[] bytes = RandomUtil.getRandom(i);
+      final String base = BaseXx.getBase64(bytes);
+      final byte[] decoded = BaseXx.getFromBase64(base);
+      assertArrayEquals(bytes, decoded);
+    }
+  }
 }

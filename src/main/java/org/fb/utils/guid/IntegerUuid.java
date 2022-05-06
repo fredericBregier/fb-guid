@@ -38,8 +38,7 @@ public final class IntegerUuid {
   /**
    * Counter part
    */
-  private static final AtomicInteger COUNTER =
-      new AtomicInteger(RandomUtil.RANDOM.nextInt());
+  private static final AtomicInteger COUNTER = new AtomicInteger(RandomUtil.RANDOM.nextInt());
   /**
    * Byte size of UUID
    */
@@ -95,8 +94,7 @@ public final class IntegerUuid {
     final String id = idsource.trim();
 
     if (id.length() != UUIDSIZE * 2) {
-      throw new InvalidArgumentRuntimeException(
-          "Attempted to parse malformed UUID: " + id);
+      throw new InvalidArgumentRuntimeException("Attempted to parse malformed UUID: " + id);
     }
     System.arraycopy(BaseXx.getFromBase16(id), 0, uuid, 0, UUIDSIZE);
   }

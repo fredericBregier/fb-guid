@@ -106,9 +106,7 @@ public class IntegerUuidTest {
     if (stop == start) {
       stop += 1;
     }
-    System.out.println(
-        "Time = " + (stop - start) + " so " + n * 1000 / (stop - start) +
-        " Uuids/s");
+    System.out.println("Time = " + (stop - start) + " so " + n * 1000 / (stop - start) + " Uuids/s");
 
     for (int i = 0; i < n; i++) {
       uuids.add(uuidArray[i].getInt());
@@ -138,11 +136,10 @@ public class IntegerUuidTest {
     if (largest == 0) {
       largest = n;
     }
-    System.out.println(uuidArray[0] + "(" + uuidArray[0].getTimestamp() + ':' +
-                       uuidArray[0].getInt() + ") - " + uuidArray[n - 1] + '(' +
-                       uuidArray[n - 1].getTimestamp() + ':' +
-                       uuidArray[n - 1].getInt() + ") = " +
-                       (uuidArray[n - 1].getInt() - uuidArray[0].getInt() + 1));
+    System.out.println(
+        uuidArray[0] + "(" + uuidArray[0].getTimestamp() + ':' + uuidArray[0].getInt() + ") - " +
+        uuidArray[n - 1] + '(' + uuidArray[n - 1].getTimestamp() + ':' + uuidArray[n - 1].getInt() + ") = " +
+        (uuidArray[n - 1].getInt() - uuidArray[0].getInt() + 1));
     System.out.println(largest + " different consecutive elements");
   }
 
@@ -163,13 +160,10 @@ public class IntegerUuidTest {
       threads[i].join();
     }
     long stop = System.currentTimeMillis();
-    System.out.println(
-        "Time = " + (stop - start) + " so " + n * 1000 / (stop - start) +
-        " Uuids/s");
+    System.out.println("Time = " + (stop - start) + " so " + n * 1000 / (stop - start) + " Uuids/s");
 
     int effectiveN = n / numThreads * numThreads;
-    Set<IntegerUuid> uuidSet =
-        new HashSet<IntegerUuid>(Arrays.asList(uuids).subList(0, effectiveN));
+    Set<IntegerUuid> uuidSet = new HashSet<IntegerUuid>(Arrays.asList(uuids).subList(0, effectiveN));
 
     assertEquals(effectiveN, uuidSet.size());
   }

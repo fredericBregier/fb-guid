@@ -57,8 +57,7 @@ public class LongUuidNativeTest {
   public void testPIDField() throws Exception {
     final long id = LongUuid.getLongUuid();
     final LongUuid longUuid = new LongUuid(id);
-    assertEquals(JvmProcessId.jvmInstanceIdAsByte() >> 4 & 0x0F,
-                 longUuid.getProcessId());
+    assertEquals(JvmProcessId.jvmInstanceIdAsByte() >> 4 & 0x0F, longUuid.getProcessId());
   }
 
   @Test
@@ -72,19 +71,16 @@ public class LongUuidNativeTest {
       uuidArray[i] = LongUuid.getLongUuid();
     }
     final long stop = System.currentTimeMillis();
-    System.out.println(
-        "Time = " + (stop - start) + " so " + n / (stop - start) * 1000 +
-        " Uuids/s");
+    System.out.println("Time = " + (stop - start) + " so " + n / (stop - start) * 1000 + " Uuids/s");
 
     uuids.addAll(Arrays.asList(uuidArray));
 
     System.out.println("Create " + n + " and get: " + uuids.size());
     assertEquals(n, uuids.size());
-    System.out.println(
-        "Time elapsed: " + uuidArray[0] + " - " + uuidArray[n - 1] + " = " +
-        (uuidArray[n - 1] - uuidArray[0]) + " & " +
-        (new LongUuid(uuidArray[n - 1]).getTimestamp() -
-         new LongUuid(uuidArray[0]).getTimestamp()));
+    System.out.println("Time elapsed: " + uuidArray[0] + " - " + uuidArray[n - 1] + " = " +
+                       (uuidArray[n - 1] - uuidArray[0]) + " & " +
+                       (new LongUuid(uuidArray[n - 1]).getTimestamp() -
+                        new LongUuid(uuidArray[0]).getTimestamp()));
   }
 
   @Test
@@ -105,9 +101,7 @@ public class LongUuidNativeTest {
       threads[i].join();
     }
     final long stop = System.currentTimeMillis();
-    System.out.println(
-        "Time = " + (stop - start) + " so " + n / (stop - start) * 1000 +
-        " Uuids/s");
+    System.out.println("Time = " + (stop - start) + " so " + n / (stop - start) * 1000 + " Uuids/s");
 
     final Set<Long> uuidSet = new HashSet<Long>(effectiveN);
     uuidSet.addAll(Arrays.asList(uuids));
@@ -133,9 +127,7 @@ public class LongUuidNativeTest {
       threads[i].join();
     }
     final long stop = System.currentTimeMillis();
-    System.out.println(
-        "Time = " + (stop - start) + " so " + n / (stop - start) * 1000 +
-        " Counter/s");
+    System.out.println("Time = " + (stop - start) + " so " + n / (stop - start) * 1000 + " Counter/s");
 
     final Set<Long> uuidSet = new HashSet<Long>(effectiveN);
     uuidSet.addAll(Arrays.asList(uuids));
@@ -157,8 +149,7 @@ public class LongUuidNativeTest {
     @Override
     public void run() {
       for (int i = 0; i < n; i++) {
-        uuids[id + i] =
-            (System.currentTimeMillis() << 20) + LongUuid.getCounter();
+        uuids[id + i] = (System.currentTimeMillis() << 20) + LongUuid.getCounter();
       }
     }
   }

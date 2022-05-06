@@ -22,17 +22,10 @@ import com.google.common.io.BaseEncoding;
  * Base16, Base32 and Base64 codecs
  */
 public final class BaseXx {
-  private static final String ARGUMENT_NULL_NOT_ALLOWED =
-      "argument null not allowed";
-  private static final BaseEncoding BASE64_URL_WITHOUT_PADDING =
-      BaseEncoding.base64Url().omitPadding();
-  private static final BaseEncoding BASE64_URL_WITH_PADDING =
-      BaseEncoding.base64Url();
-  private static final BaseEncoding BASE64 = BaseEncoding.base64();
-  private static final BaseEncoding BASE32 =
-      BaseEncoding.base32().lowerCase().omitPadding();
-  private static final BaseEncoding BASE16 =
-      BaseEncoding.base16().lowerCase().omitPadding();
+  private static final String ARGUMENT_NULL_NOT_ALLOWED = "argument null not allowed";
+  private static final BaseEncoding BASE64 = BaseEncoding.base64().omitPadding();
+  private static final BaseEncoding BASE32 = BaseEncoding.base32().lowerCase().omitPadding();
+  private static final BaseEncoding BASE16 = BaseEncoding.base16().lowerCase().omitPadding();
 
   private static final Boolean NOT_NULL = Boolean.TRUE;
 
@@ -43,72 +36,85 @@ public final class BaseXx {
   /**
    * @param bytes to transform
    *
-   * @return the Base 16 representation
+   * @return the Base 16 representation Without Padding representation
    *
    * @throws IllegalArgumentException if argument is not compatible
    */
   public static String getBase16(final byte[] bytes) {
-    ParametersChecker.checkParameter(ARGUMENT_NULL_NOT_ALLOWED, bytes,
-                                     NOT_NULL);
+    ParametersChecker.checkParameter(ARGUMENT_NULL_NOT_ALLOWED, bytes, NOT_NULL);
     return BASE16.encode(bytes);
   }
 
   /**
    * @param bytes to transform
+   * @param offset offset to start from
+   * @param size size to use from offset
    *
-   * @return the Base 32 representation
+   * @return the Base 16 representation Without Padding representation
+   *
+   * @throws IllegalArgumentException if argument is not compatible
+   */
+  public static String getBase16(final byte[] bytes, final int offset, final int size) {
+    ParametersChecker.checkParameter(ARGUMENT_NULL_NOT_ALLOWED, bytes, NOT_NULL);
+    return BASE16.encode(bytes, offset, size);
+  }
+
+  /**
+   * @param bytes to transform
+   *
+   * @return the Base 32 representation Without Padding representation
    *
    * @throws IllegalArgumentException if argument is not compatible
    */
   public static String getBase32(final byte[] bytes) {
-    ParametersChecker.checkParameter(ARGUMENT_NULL_NOT_ALLOWED, bytes,
-                                     NOT_NULL);
+    ParametersChecker.checkParameter(ARGUMENT_NULL_NOT_ALLOWED, bytes, NOT_NULL);
     return BASE32.encode(bytes);
   }
 
   /**
    * @param bytes to transform
+   * @param offset offset to start from
+   * @param size size to use from offset
    *
-   * @return the Base 64 Without Padding representation (used only for url)
+   * @return the Base 32 representation Without Padding representation
    *
    * @throws IllegalArgumentException if argument is not compatible
    */
-  public static String getBase64UrlWithoutPadding(final byte[] bytes) {
-    ParametersChecker.checkParameter(ARGUMENT_NULL_NOT_ALLOWED, bytes,
-                                     NOT_NULL);
-    return BASE64_URL_WITHOUT_PADDING.encode(bytes);
+  public static String getBase32(final byte[] bytes, final int offset, final int size) {
+    ParametersChecker.checkParameter(ARGUMENT_NULL_NOT_ALLOWED, bytes, NOT_NULL);
+    return BASE32.encode(bytes, offset, size);
   }
 
   /**
    * @param bytes to transform
    *
-   * @return the Base 64 With Padding representation (used only for url)
-   *
-   * @throws IllegalArgumentException if argument is not compatible
-   */
-  public static String getBase64UrlWithPadding(final byte[] bytes) {
-    ParametersChecker.checkParameter(ARGUMENT_NULL_NOT_ALLOWED, bytes,
-                                     NOT_NULL);
-    return BASE64_URL_WITH_PADDING.encode(bytes);
-  }
-
-  /**
-   * @param bytes to transform
-   *
-   * @return the Base 64 With Padding representation
+   * @return the Base 64 Without Padding representation
    *
    * @throws IllegalArgumentException if argument is not compatible
    */
   public static String getBase64(final byte[] bytes) {
-    ParametersChecker.checkParameter(ARGUMENT_NULL_NOT_ALLOWED, bytes,
-                                     NOT_NULL);
+    ParametersChecker.checkParameter(ARGUMENT_NULL_NOT_ALLOWED, bytes, NOT_NULL);
     return BASE64.encode(bytes);
+  }
+
+  /**
+   * @param bytes to transform
+   * @param offset offset to start from
+   * @param size size to use from offset
+   *
+   * @return the Base 64 Without Padding representation
+   *
+   * @throws IllegalArgumentException if argument is not compatible
+   */
+  public static String getBase64(final byte[] bytes, final int offset, final int size) {
+    ParametersChecker.checkParameter(ARGUMENT_NULL_NOT_ALLOWED, bytes, NOT_NULL);
+    return BASE64.encode(bytes, offset, size);
   }
 
   /**
    * @param base16 to transform
    *
-   * @return the byte from Base 16
+   * @return the byte from Base 16 Without Padding
    *
    * @throws IllegalArgumentException if argument is not compatible
    */
@@ -120,7 +126,7 @@ public final class BaseXx {
   /**
    * @param base32 to transform
    *
-   * @return the byte from Base 32
+   * @return the byte from Base 32 Without Padding
    *
    * @throws IllegalArgumentException if argument is not compatible
    */
@@ -132,36 +138,12 @@ public final class BaseXx {
   /**
    * @param base64 to transform
    *
-   * @return the byte from Base 64 Without Padding (used only for url)
+   * @return the byte from Base 64 Without Padding
    *
    * @throws IllegalArgumentException if argument is not compatible
    */
-  public static byte[] getFromBase64UrlWithoutPadding(final String base64) {
+  public static byte[] getFromBase64(final String base64) {
     ParametersChecker.checkParameter(ARGUMENT_NULL_NOT_ALLOWED, base64);
-    return BASE64_URL_WITHOUT_PADDING.decode(base64);
-  }
-
-  /**
-   * @param base64Padding to transform
-   *
-   * @return the byte from Base 64 With Padding (used only for url)
-   *
-   * @throws IllegalArgumentException if argument is not compatible
-   */
-  public static byte[] getFromBase64UrlPadding(final String base64Padding) {
-    ParametersChecker.checkParameter(ARGUMENT_NULL_NOT_ALLOWED, base64Padding);
-    return BASE64_URL_WITH_PADDING.decode(base64Padding);
-  }
-
-  /**
-   * @param base64Padding to transform
-   *
-   * @return the byte from Base 64 With Padding
-   *
-   * @throws IllegalArgumentException if argument is not compatible
-   */
-  public static byte[] getFromBase64(final String base64Padding) {
-    ParametersChecker.checkParameter(ARGUMENT_NULL_NOT_ALLOWED, base64Padding);
-    return BASE64.decode(base64Padding);
+    return BASE64.decode(base64);
   }
 }

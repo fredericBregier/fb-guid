@@ -34,8 +34,7 @@ public class TestWatcherJunit4 extends TestWatcher {
   @Override
   protected void starting(Description description) {
     SysErrLogger.FAKE_LOGGER.sysout(
-        Color.YELLOW + "==============\nStarting test: " +
-        description.getMethodName() + Color.RESET);
+        Color.YELLOW + "==============\nStarting test: " + description.getMethodName() + Color.RESET);
     startTime = System.nanoTime();
   }
 
@@ -43,8 +42,8 @@ public class TestWatcherJunit4 extends TestWatcher {
   protected void finished(Description description) {
     long time = (System.nanoTime() - startTime) / 1000000;
     SysErrLogger.FAKE_LOGGER.sysout(
-        Color.BLUE + "Ending test: " + description.getMethodName() + " in " +
-        time + " ms\n==============" + Color.RESET);
+        Color.BLUE + "Ending test: " + description.getMethodName() + " in " + time + " ms\n==============" +
+        Color.RESET);
   }
 
   enum Color {

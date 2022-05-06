@@ -13,25 +13,14 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.fb.utils.exceptions;
+package org.fb.utils.guid;
 
+import org.fb.utils.guid.GuidFactory.GUID_CONFIGURATION;
 
-/**
- * Argument invalid exception
- */
-public class InvalidArgumentRuntimeException extends RuntimeException {
+public class GuidFactoryMaxTest extends GuidFactoryAbstract {
 
-  /**
-   * serialVersionUID of long:
-   */
-  private static final long serialVersionUID = -3817642817509722692L;
-
-  public InvalidArgumentRuntimeException(final String message) {
-    super(message);
+  @Override
+  void setupGuidFactory() {
+    guidFactory.useConfiguration(GUID_CONFIGURATION.BIGGEST);
   }
-
-  public InvalidArgumentRuntimeException(final String message, final Throwable cause) {
-    super(message, cause);
-  }
-
 }

@@ -32,8 +32,7 @@ import java.util.regex.Pattern;
 public final class ParametersChecker {
 
   // Default ASCII for Param check
-  private static final Pattern UNPRINTABLE_PATTERN =
-      Pattern.compile("[\\p{Cntrl}&&[^\r\n\t]]");
+  private static final Pattern UNPRINTABLE_PATTERN = Pattern.compile("[\\p{Cntrl}&&[^\r\n\t]]");
   private static final List<String> RULES = new ArrayList<>();
 
   // default parameters for XML check
@@ -68,8 +67,7 @@ public final class ParametersChecker {
    *
    * @throws InvalidArgumentRuntimeException if null or empty
    */
-  public static void checkParameter(final String errorMessage,
-                                    final String... parameters)
+  public static void checkParameter(final String errorMessage, final String... parameters)
       throws InvalidArgumentRuntimeException {
     if (parameters == null) {
       throw new InvalidArgumentRuntimeException(errorMessage);
@@ -90,17 +88,14 @@ public final class ParametersChecker {
    *
    * @throws InvalidArgumentRuntimeException if null or empty
    */
-  public static void checkParameterDefault(final String errorMessage,
-                                           final String... parameters)
+  public static void checkParameterDefault(final String errorMessage, final String... parameters)
       throws InvalidArgumentRuntimeException {
     if (parameters == null) {
-      throw new InvalidArgumentRuntimeException(
-          errorMessage + MANDATORY_PARAMETER);
+      throw new InvalidArgumentRuntimeException(errorMessage + MANDATORY_PARAMETER);
     }
     for (final String parameter : parameters) {
       if (Strings.isNullOrEmpty(parameter) || parameter.trim().isEmpty()) {
-        throw new InvalidArgumentRuntimeException(
-            errorMessage + MANDATORY_PARAMETER);
+        throw new InvalidArgumentRuntimeException(errorMessage + MANDATORY_PARAMETER);
       }
     }
   }
@@ -133,17 +128,14 @@ public final class ParametersChecker {
    *
    * @throws InvalidArgumentRuntimeException if null or empty
    */
-  public static void checkParameterDefault(final String errorMessage,
-                                           final Object... parameters)
+  public static void checkParameterDefault(final String errorMessage, final Object... parameters)
       throws InvalidArgumentRuntimeException {
     if (parameters == null) {
-      throw new InvalidArgumentRuntimeException(
-          errorMessage + MANDATORY_PARAMETER);
+      throw new InvalidArgumentRuntimeException(errorMessage + MANDATORY_PARAMETER);
     }
     for (final Object parameter : parameters) {
       if (parameter == null) {
-        throw new InvalidArgumentRuntimeException(
-            errorMessage + MANDATORY_PARAMETER);
+        throw new InvalidArgumentRuntimeException(errorMessage + MANDATORY_PARAMETER);
       }
     }
   }
@@ -157,8 +149,7 @@ public final class ParametersChecker {
    *
    * @throws InvalidArgumentRuntimeException if null
    */
-  public static void checkParameterNullOnly(final String errorMessage,
-                                            final String... parameters)
+  public static void checkParameterNullOnly(final String errorMessage, final String... parameters)
       throws InvalidArgumentRuntimeException {
     if (parameters == null) {
       throw new InvalidArgumentRuntimeException(errorMessage);
@@ -179,8 +170,7 @@ public final class ParametersChecker {
    *
    * @throws InvalidArgumentRuntimeException if null
    */
-  public static void checkParameter(final String errorMessage,
-                                    final Object... parameters)
+  public static void checkParameter(final String errorMessage, final Object... parameters)
       throws InvalidArgumentRuntimeException {
     if (parameters == null) {
       throw new InvalidArgumentRuntimeException(errorMessage);
@@ -201,12 +191,10 @@ public final class ParametersChecker {
    *
    * @throws InvalidArgumentRuntimeException if invalid
    */
-  public static void checkValue(final String name, final long variable,
-                                final long minValue)
+  public static void checkValue(final String name, final long variable, final long minValue)
       throws InvalidArgumentRuntimeException {
     if (variable < minValue) {
-      throw new InvalidArgumentRuntimeException(
-          "Parameter " + name + " is less than " + minValue);
+      throw new InvalidArgumentRuntimeException("Parameter " + name + " is less than " + minValue);
     }
   }
 
@@ -217,8 +205,7 @@ public final class ParametersChecker {
    *
    * @throws InvalidArgumentRuntimeException if invalid
    */
-  public static String checkSanityString(final String value)
-      throws InvalidArgumentRuntimeException {
+  public static String checkSanityString(final String value) throws InvalidArgumentRuntimeException {
     checkSanityString(new String[] { value });
     return value;
   }
@@ -230,8 +217,7 @@ public final class ParametersChecker {
    *
    * @throws InvalidArgumentRuntimeException if invalid
    */
-  public static void checkSanityString(final String... strings)
-      throws InvalidArgumentRuntimeException {
+  public static void checkSanityString(final String... strings) throws InvalidArgumentRuntimeException {
     for (final String field : strings) {
       if (isEmpty(field)) {
         continue;

@@ -27,10 +27,8 @@ import java.util.Set;
  */
 public final class SingletonUtils {
   private static final byte[] SINGLETON_BYTE_ARRAY = {};
-  private static final InputStream SINGLETON_INPUTSTREAM =
-      new NullInputStream();
-  private static final OutputStream SINGLETON_OUTPUTSTREAM =
-      new VoidOutputStream();
+  private static final InputStream SINGLETON_INPUTSTREAM = new NullInputStream();
+  private static final OutputStream SINGLETON_OUTPUTSTREAM = new VoidOutputStream();
 
   private SingletonUtils() {
     // empty

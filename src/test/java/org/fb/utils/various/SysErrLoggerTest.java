@@ -16,7 +16,6 @@
 
 package org.fb.utils.various;
 
-import com.google.common.base.Utf8;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;

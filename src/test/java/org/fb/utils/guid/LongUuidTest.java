@@ -111,9 +111,7 @@ public class LongUuidTest {
       uuidArray[i] = new LongUuid();
     }
     final long stop = System.currentTimeMillis();
-    System.out.println(
-        "Time = " + (stop - start) + " so " + n / (stop - start) * 1000 +
-        " Uuids/s");
+    System.out.println("Time = " + (stop - start) + " so " + n / (stop - start) * 1000 + " Uuids/s");
 
     for (int i = 0; i < n; i++) {
       uuids.add(uuidArray[i].getLong());
@@ -142,13 +140,11 @@ public class LongUuidTest {
       largest = n;
     }
     System.out.println(
-        "Time elapsed: " + uuidArray[0] + '(' + uuidArray[0].getTimestamp() +
-        ':' + uuidArray[0].getLong() + ") - " + uuidArray[n - 1] + '(' +
-        uuidArray[n - 1].getTimestamp() + ':' + uuidArray[n - 1].getLong() +
+        "Time elapsed: " + uuidArray[0] + '(' + uuidArray[0].getTimestamp() + ':' + uuidArray[0].getLong() +
+        ") - " + uuidArray[n - 1] + '(' + uuidArray[n - 1].getTimestamp() + ':' + uuidArray[n - 1].getLong() +
         ") = " + (uuidArray[n - 1].getLong() - uuidArray[0].getLong()) + " & " +
         (uuidArray[n - 1].getTimestamp() - uuidArray[0].getTimestamp()));
-    System.out.println(
-        largest + " different consecutive elements for same time");
+    System.out.println(largest + " different consecutive elements for same time");
   }
 
   @Test
@@ -169,9 +165,7 @@ public class LongUuidTest {
       threads[i].join();
     }
     final long stop = System.currentTimeMillis();
-    System.out.println(
-        "Time = " + (stop - start) + " so " + n / (stop - start) * 1000 +
-        " Uuids/s");
+    System.out.println("Time = " + (stop - start) + " so " + n / (stop - start) * 1000 + " Uuids/s");
 
     final Set<LongUuid> uuidSet = new HashSet<LongUuid>(effectiveN);
     uuidSet.addAll(Arrays.asList(uuids));
@@ -197,9 +191,7 @@ public class LongUuidTest {
       threads[i].join();
     }
     final long stop = System.currentTimeMillis();
-    System.out.println(
-        "Time = " + (stop - start) + " so " + n / (stop - start) * 1000 +
-        " Counter/s");
+    System.out.println("Time = " + (stop - start) + " so " + n / (stop - start) * 1000 + " Counter/s");
 
     final Set<Long> uuidSet = new HashSet<Long>(effectiveN);
     for (Long i : uuids) {
@@ -223,8 +215,7 @@ public class LongUuidTest {
     @Override
     public void run() {
       for (int i = 0; i < n; i++) {
-        uuids[id + i] =
-            (System.currentTimeMillis() << 20) + LongUuid.getCounter();
+        uuids[id + i] = (System.currentTimeMillis() << 20) + LongUuid.getCounter();
       }
     }
   }
