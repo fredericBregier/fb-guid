@@ -87,7 +87,7 @@ public final class LongUuid {
     // Jvmd Id on 4 first bits
     // Timestamp on 40 bits (2^40 ms = 35 years rolling)
     // Count on 20 bits => 2^20 (1M / ms)
-    long uuidAsLong = (JvmProcessId.jvmByteId & 0xF0L) << 56;
+    long uuidAsLong = (JvmProcessMacIds.getJvmByteId() & 0xF0L) << 56;
     uuidAsLong |= (time & 0xFFFFFFFFFFL) << 20;
     uuidAsLong |= count & 0xFFFFFL;
     return uuidAsLong;
@@ -188,5 +188,9 @@ public final class LongUuid {
     value |= ((long) uuid[6] & 0xFF) << 8;
     value |= (long) uuid[7] & 0xFF;
     return value;
+  }
+
+  public static short getKeySize() {
+    return UUIDSIZE;
   }
 }

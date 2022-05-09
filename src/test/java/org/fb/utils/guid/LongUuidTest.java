@@ -97,7 +97,7 @@ public class LongUuidTest {
   public void testPIDField() throws Exception {
     final LongUuid id = new LongUuid();
 
-    assertEquals(JvmProcessId.jvmInstanceIdAsByte() >> 4 & 0x0F, id.getProcessId());
+    assertEquals(JvmProcessMacIds.getJvmByteId() >> 4 & 0x0F, id.getProcessId());
   }
 
   @Test

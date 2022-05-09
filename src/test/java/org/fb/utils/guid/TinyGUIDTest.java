@@ -70,13 +70,13 @@ public class TinyGUIDTest {
       id = new TinyGUID();
       assertEquals(VERSION, id.getVersion());
       assertEquals(0, id.getTenantId());
-      assertEquals(JvmProcessId.jvmInstanceIdAsInteger() & 0x7FFFFFFF, id.getPlatformId());
+      assertEquals(JvmProcessMacIds.getJvmIntegerId() & 0x7FFFFFFF, id.getPlatformId());
       byte[] platformId = id.getPlatformIdAsBytes();
 
       id = new TinyGUID(100);
       assertEquals(VERSION, id.getVersion());
       assertEquals(100, id.getTenantId());
-      assertEquals(JvmProcessId.jvmInstanceIdAsInteger() & 0x7FFFFFFF, id.getPlatformId());
+      assertEquals(JvmProcessMacIds.getJvmIntegerId() & 0x7FFFFFFF, id.getPlatformId());
       assertArrayEquals(platformId, id.getPlatformIdAsBytes());
 
       id = new TinyGUID(100, 999);

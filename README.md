@@ -18,7 +18,8 @@ one being also **GUID**:
     Tenant Id (2 bytes), Platform Id (based on specified value or MAC Address and PID of
     Java process in 4 bytes), Timestamp (up to 925 years rolling) and a counter to
     prevent millisecond collisions (total being 16 bytes)
-* Simple integration with Jackon for the `GUID` and `TinyGUID` 
+  * `Guid` through `GuidFactory` for all usages, either small or big GUUID, parametered.
+* Simple integration with Jackon for the `GUID`, `TinyGUID` and `Guid` 
 * Base 64, 32, 16 and ARK representations
 
 ## Usage
@@ -61,13 +62,32 @@ guid.compareTo(guid2); // < 0 since guid generated before guid2
 // Comparison is: tenant first, then timestamp, then counter 
 ```
 
+For `GuidFactory`, the principles are the same:
+```java
+// Create Factpry as wanted
+GuidFactory factory = new GuidFactory().useConfiguration(guidConfiguration);
+// GUUID_CONFIGURATION beeing one of SMALLEST, TINY, STANDARD, BIGGEST
+// factory can be chnged according to specific parameters
+factory.setTimeSize(6).setTenantId(myLong).setPlatformId(myLong2).resetPlatformeId();
+Guid guid = factory.newGuid();
+Guid guid2 = factory.newGuid();
+guid.compareTo(guid2); // < 0 since guid generated before guid2
+// Comparison is: tenant first, then timestamp, then counter 
+Guid guid3 = factory.newGuid(myTenantId, myPlatformId);
+```
+
+
 ## Benchmarks
 
 On a 4 vCPU with 10 concurrent threads:
-* IntegerUuid: 12 Millions/s for 4 bytes and very limited UUID
-* LongUuid: 12 Millions/s for 8 bytes and limited UUID
-* TinyGUID: 9 Millions/s for 16 bytes and valid GUID
-* GUID: 7.5 Millions/s for 21 bytes and full GUID
+* IntegerUuid: 4,5 Millions/s for 4 bytes and very limited UUID
+* LongUuid: 4,8 Millions/s for 8 bytes and limited UUID
+* TinyGUID: 3,7 Millions/s for 16 bytes and valid GUID
+* GUID: 3,4 Millions/s for 21 bytes and full GUID
+* Smallest Guid: 2,8 Millions/s for 12 bytes and limited UUID
+* Tiny Guid: 2,8 Millions/s for 18 bytes and valid UUID
+* Standard Guid: 3,2 Millions/s for 24 bytes and full UUID
+* Biggest Guid: 2,7 Millions/s for 35 bytes and limited UUID
 
 ## Dependencies
 

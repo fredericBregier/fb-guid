@@ -31,30 +31,49 @@ public class BenchmarkUuidsTest {
     final int effectiveN = n / numThreads * numThreads;
 
     // Warmup
-    long timems = setTinyGUIDs(threads, effectiveN, n, numThreads);
-    System.out.println("Tiny: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s");
+    long timems = setGUIDs(threads, effectiveN, n, numThreads);
+    System.out.println("WarmUp GUID: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s KeySize:" +
+                       GUID.getKeySize() + ":" + GUID.getKey32Size());
+    GuidFactory guidFactory = new GuidFactory().useConfiguration(GUID_CONFIGURATION.DEFAULT);
+    timems = setGuids(threads, effectiveN, n, numThreads, guidFactory);
+    System.out.println(
+        "WarmUp Default Guid: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s KeySize:" +
+        guidFactory.getKeySize() + ":" + guidFactory.getKey32Size());
+
 
     timems = setIntegerUuids(threads, effectiveN, n, numThreads);
-    System.out.println("Intg: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s");
+    System.out.println("IntegerUuid: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s KeySize:" +
+                       IntegerUuid.getKeySize());
     timems = setLongUuids(threads, effectiveN, n, numThreads);
-    System.out.println("Long: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s");
-    timems = setGUIDs(threads, effectiveN, n, numThreads);
-    System.out.println("GUID: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s");
+    System.out.println("LongUuid: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s KeySize:" +
+                       LongUuid.getKeySize());
     timems = setTinyGUIDs(threads, effectiveN, n, numThreads);
-    System.out.println("Tiny: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s");
-    timems = setGuids(threads, effectiveN, n, numThreads,
-                      new GuidFactory().useConfiguration(GUID_CONFIGURATION.SMALLEST)
-                                       .setCounterSize((short) 3));
-    System.out.println("Smallest: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s");
-    timems = setGuids(threads, effectiveN, n, numThreads,
-                      new GuidFactory().useConfiguration(GUID_CONFIGURATION.TINY));
-    System.out.println("Tiny2: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s");
-    timems = setGuids(threads, effectiveN, n, numThreads,
-                      new GuidFactory().useConfiguration(GUID_CONFIGURATION.STANDARD));
-    System.out.println("Standard: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s");
-    timems = setGuids(threads, effectiveN, n, numThreads,
-                      new GuidFactory().useConfiguration(GUID_CONFIGURATION.BIGGEST));
-    System.out.println("Biggest: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s");
+    System.out.println("TinyGUID: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s KeySize:" +
+                       TinyGUID.getKeySize() + ":" + TinyGUID.getKey32Size());
+    timems = setGUIDs(threads, effectiveN, n, numThreads);
+    System.out.println(
+        "GUID: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s KeySize:" + GUID.getKeySize() +
+        ":" + GUID.getKey32Size());
+    guidFactory.useConfiguration(GUID_CONFIGURATION.SMALLEST);
+    timems = setGuids(threads, effectiveN, n, numThreads, guidFactory);
+    System.out.println("Smallest Guid: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s KeySize:" +
+                       guidFactory.getKeySize() + ":" + guidFactory.getKey32Size());
+    guidFactory.useConfiguration(GUID_CONFIGURATION.TINY);
+    timems = setGuids(threads, effectiveN, n, numThreads, guidFactory);
+    System.out.println("Tiny Guid: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s KeySize:" +
+                       guidFactory.getKeySize() + ":" + guidFactory.getKey32Size());
+    guidFactory.useConfiguration(GUID_CONFIGURATION.DEFAULT);
+    timems = setGuids(threads, effectiveN, n, numThreads, guidFactory);
+    System.out.println("Default Guid: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s KeySize:" +
+                       guidFactory.getKeySize() + ":" + guidFactory.getKey32Size());
+    guidFactory.useConfiguration(GUID_CONFIGURATION.STANDARD);
+    timems = setGuids(threads, effectiveN, n, numThreads, guidFactory);
+    System.out.println("Standard Guid: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s KeySize:" +
+                       guidFactory.getKeySize() + ":" + guidFactory.getKey32Size());
+    guidFactory.useConfiguration(GUID_CONFIGURATION.BIGGEST);
+    timems = setGuids(threads, effectiveN, n, numThreads, guidFactory);
+    System.out.println("Biggest Guid: Time = " + timems + " so " + n / timems * 1000 + " Uuids/s KeySize:" +
+                       guidFactory.getKeySize() + ":" + guidFactory.getKey32Size());
   }
 
   private long setTinyGUIDs(final Thread[] threads, final int effectiveN, final int n, final int numThreads)

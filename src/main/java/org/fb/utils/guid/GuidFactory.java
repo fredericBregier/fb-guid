@@ -44,8 +44,8 @@ public final class GuidFactory {
   static final int MIN_INT = -2147483648;
   static final int MAX_INT = 2147483647;
   static final int MASK_INT = 0xFFFFFFFF;
-  private static final short DEFAULT_TENANT = 4;
-  private static final short DEFAULT_PLATFORM = 4;
+  private static final short DEFAULT_TENANT = 2;
+  private static final short DEFAULT_PLATFORM = 6;
   private static final short DEFAULT_PID = 3;
   private static final short DEFAULT_TIME = 6;
   private static final short DEFAULT_COUNTER = 3;
@@ -70,11 +70,11 @@ public final class GuidFactory {
   private static final short MAX_SIZE =
       HEADER_SIZE + MAX_TENANT + MAX_PLATFORM + MAX_PID + MAX_TIME + MAX_COUNTER;
   private static final byte VERSION = 3;
-  private short tenantSize = GUID_CONFIGURATION.STANDARD.tenantSize;
-  private short platformSize = GUID_CONFIGURATION.STANDARD.platformSize;
-  private short pidSize = GUID_CONFIGURATION.STANDARD.pidSize;
-  private short timeSize = GUID_CONFIGURATION.STANDARD.timeSize;
-  private short counterSize = GUID_CONFIGURATION.STANDARD.counterSize;
+  private short tenantSize = GUID_CONFIGURATION.DEFAULT.tenantSize;
+  private short platformSize = GUID_CONFIGURATION.DEFAULT.platformSize;
+  private short pidSize = GUID_CONFIGURATION.DEFAULT.pidSize;
+  private short timeSize = GUID_CONFIGURATION.DEFAULT.timeSize;
+  private short counterSize = GUID_CONFIGURATION.DEFAULT.counterSize;
   private int maxCounter;
   private short keySize;
   private short key16Size;
@@ -85,8 +85,8 @@ public final class GuidFactory {
   private short timePos;
   private short counterPos;
   private long tenantId;
-  private long platformId = JvmProcessId.macAddressAsLong();
-  private int pid = JvmProcessId.JVMPID;
+  private long platformId = JvmProcessMacIds.getMacLong();
+  private int pid = JvmProcessMacIds.getJvmPID();
 
   public GuidFactory() {
     finalizeConfiguration();
@@ -145,7 +145,7 @@ public final class GuidFactory {
   }
 
   public GuidFactory resetPlatformId() {
-    platformId = JvmProcessId.macAddressAsLong();
+    platformId = JvmProcessMacIds.getMacLong();
     return this;
   }
 
@@ -155,7 +155,7 @@ public final class GuidFactory {
   }
 
   public GuidFactory resetPid() {
-    pid = JvmProcessId.JVMPID;
+    pid = JvmProcessMacIds.getJvmPID();
     return this;
   }
 
@@ -324,8 +324,9 @@ public final class GuidFactory {
 
   public enum GUID_CONFIGURATION {
     BIGGEST(MAX_TENANT, MAX_PLATFORM, MAX_PID, MAX_TIME, MAX_COUNTER),
-    STANDARD(DEFAULT_TENANT, DEFAULT_PLATFORM, DEFAULT_PID, DEFAULT_TIME, DEFAULT_COUNTER),
-    TINY((short) 2, (short) 4, (short) 0, (short) 6, (short) 3),
+    STANDARD((short) 3, DEFAULT_PLATFORM, DEFAULT_PID, DEFAULT_TIME, DEFAULT_COUNTER),
+    DEFAULT(DEFAULT_TENANT, DEFAULT_PLATFORM, DEFAULT_PID, DEFAULT_TIME, DEFAULT_COUNTER),
+    TINY(DEFAULT_TENANT, (short) 4, (short) 2, DEFAULT_TIME, DEFAULT_COUNTER),
     SMALLEST(MIN_TENANT, MIN_PLATFORM, MIN_PID, MIN_TIME, MIN_COUNTER);
     private final short tenantSize;
     private final short platformSize;

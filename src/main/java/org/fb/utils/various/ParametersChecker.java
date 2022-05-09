@@ -43,7 +43,6 @@ public final class ParametersChecker {
   // default parameters for Javascript check
   private static final String SCRIPT_TAG_UNESCAPED = "<script>";
   private static final String SCRIPT_TAG_ESCAPED = "&lt;script&gt;";
-  private static final String MANDATORY_PARAMETER = " is mandatory parameter";
 
   static {
     RULES.add(CDATA_TAG_UNESCAPED);
@@ -67,75 +66,15 @@ public final class ParametersChecker {
    *
    * @throws InvalidArgumentRuntimeException if null or empty
    */
-  public static void checkParameter(final String errorMessage, final String... parameters)
+  public static void checkParameter(final String errorMessage, final Object... parameters)
       throws InvalidArgumentRuntimeException {
     if (parameters == null) {
       throw new InvalidArgumentRuntimeException(errorMessage);
     }
-    for (final String parameter : parameters) {
-      if (Strings.isNullOrEmpty(parameter) || parameter.trim().isEmpty()) {
-        throw new InvalidArgumentRuntimeException(errorMessage);
-      }
-    }
-  }
-
-  /**
-   * Check if any parameter are null or empty and if so, throw an
-   * IllegalArgumentException
-   *
-   * @param errorMessage the error message
-   * @param parameters set of parameters
-   *
-   * @throws InvalidArgumentRuntimeException if null or empty
-   */
-  public static void checkParameterDefault(final String errorMessage, final String... parameters)
-      throws InvalidArgumentRuntimeException {
-    if (parameters == null) {
-      throw new InvalidArgumentRuntimeException(errorMessage + MANDATORY_PARAMETER);
-    }
-    for (final String parameter : parameters) {
-      if (Strings.isNullOrEmpty(parameter) || parameter.trim().isEmpty()) {
-        throw new InvalidArgumentRuntimeException(errorMessage + MANDATORY_PARAMETER);
-      }
-    }
-  }
-
-  /**
-   * Check if any parameter are null or empty and if so, return false
-   *
-   * @param parameters set of parameters
-   *
-   * @return True if not null and not empty neither containing only spaces
-   */
-  public static boolean isNotEmpty(final String... parameters) {
-    if (parameters == null) {
-      return false;
-    }
-    for (final String parameter : parameters) {
-      if (Strings.isNullOrEmpty(parameter) || parameter.trim().isEmpty()) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
-   * Check if any parameter are null or empty and if so, throw an
-   * IllegalArgumentException
-   *
-   * @param errorMessage the error message
-   * @param parameters set of parameters
-   *
-   * @throws InvalidArgumentRuntimeException if null or empty
-   */
-  public static void checkParameterDefault(final String errorMessage, final Object... parameters)
-      throws InvalidArgumentRuntimeException {
-    if (parameters == null) {
-      throw new InvalidArgumentRuntimeException(errorMessage + MANDATORY_PARAMETER);
-    }
     for (final Object parameter : parameters) {
-      if (parameter == null) {
-        throw new InvalidArgumentRuntimeException(errorMessage + MANDATORY_PARAMETER);
+      if (parameter == null || parameter instanceof String && (Strings.isNullOrEmpty((String) parameter) ||
+                                                               ((String) parameter).trim().isEmpty())) {
+        throw new InvalidArgumentRuntimeException(errorMessage);
       }
     }
   }
@@ -149,28 +88,7 @@ public final class ParametersChecker {
    *
    * @throws InvalidArgumentRuntimeException if null
    */
-  public static void checkParameterNullOnly(final String errorMessage, final String... parameters)
-      throws InvalidArgumentRuntimeException {
-    if (parameters == null) {
-      throw new InvalidArgumentRuntimeException(errorMessage);
-    }
-    for (final String parameter : parameters) {
-      if (parameter == null) {
-        throw new InvalidArgumentRuntimeException(errorMessage);
-      }
-    }
-  }
-
-  /**
-   * Check if any parameter are null and if so, throw an
-   * IllegalArgumentException
-   *
-   * @param errorMessage set of parameters
-   * @param parameters set parameters to be checked
-   *
-   * @throws InvalidArgumentRuntimeException if null
-   */
-  public static void checkParameter(final String errorMessage, final Object... parameters)
+  public static void checkParameterNullOnly(final String errorMessage, final Object... parameters)
       throws InvalidArgumentRuntimeException {
     if (parameters == null) {
       throw new InvalidArgumentRuntimeException(errorMessage);
@@ -234,18 +152,60 @@ public final class ParametersChecker {
   }
 
   /**
+   * Check if any parameter are null or empty and if so, return false
+   *
+   * @param parameters set of parameters
+   *
+   * @return True if not null and not empty neither containing only spaces
+   */
+  public static boolean isNotEmpty(final Object... parameters) {
+    if (parameters == null) {
+      return false;
+    }
+    for (final Object parameter : parameters) {
+      if (parameter == null || parameter instanceof String && (Strings.isNullOrEmpty((String) parameter) ||
+                                                               ((String) parameter).trim().isEmpty())) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * Check if any parameter are null or empty and if so, return true
    *
    * @param parameters set of parameters
    *
    * @return True if any is null or empty or containing only spaces
    */
-  public static boolean isEmpty(final String... parameters) {
+  public static boolean isEmpty(final Object... parameters) {
     if (parameters == null) {
       return true;
     }
-    for (final String parameter : parameters) {
-      if (Strings.isNullOrEmpty(parameter) || parameter.trim().isEmpty()) {
+    for (final Object parameter : parameters) {
+      if (parameter == null || parameter instanceof String && (Strings.isNullOrEmpty((String) parameter) ||
+                                                               ((String) parameter).trim().isEmpty())) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Check if at least one parameter is not null and not empty and if so, return true
+   *
+   * @param parameters set of parameters
+   *
+   * @return True if at least one is not null and not empty neither containing only spaces
+   */
+  public static boolean hasNotEmpty(final Object... parameters) {
+    if (parameters == null) {
+      return false;
+    }
+    for (final Object parameter : parameters) {
+      if (parameter != null && (!(parameter instanceof String) ||
+                                !Strings.isNullOrEmpty((String) parameter) &&
+                                !((String) parameter).trim().isEmpty())) {
         return true;
       }
     }

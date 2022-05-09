@@ -24,7 +24,12 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -33,37 +38,31 @@ import java.util.regex.Pattern;
 
 import static org.fb.utils.various.SystemPropertyUtil.*;
 
-public final class JvmProcessId {
-  /**
-   * 2 bytes value maximum
-   */
-  static final int JVMPID;
+public final class JvmProcessMacIds {
   /**
    * Definition for Machine Id replacing MAC address
    */
   private static final Pattern MACHINE_ID_PATTERN = Pattern.compile("^(?:[0-9a-fA-F][:-]?){6,8}$");
-  private static final int MACHINE_ID_LEN = 6;
+  private static final int MACHINE_ID_LEN = 8;
   /**
-   * MAX value on 3 bytes (64 system use 2^22 id)
+   * MAX value on 4 bytes (64 system use 2^31-1 id, in fact shall be 4 M)
    */
-  private static final int MAX_PID = 0xFFFFFF;
+  private static final int MAX_PID = 0x7FFFFFFF;
+  private static final int BYTE_FILTER = 0xFF;
   private static final Object[] EMPTY_OBJECTS = new Object[0];
   private static final Class<?>[] EMPTY_CLASSES = new Class<?>[0];
   private static final Pattern COMPILE = Pattern.compile("[:-]");
+  private static final byte[] EMPTY_BYTES = {};
 
-  /**
-   * Try to get Mac Address but could be also changed dynamically
-   */
-  static byte[] mac;
-  static long macLong;
-  static int macInt;
-  static byte jvmByteId;
-  static int jvmIntegerId;
-  static long jvmLongId;
+  private static final int JVMPID;
+  private static byte[] mac;
+  private static long macLong;
+  private static int macInt;
+  private static byte jvmByteId;
+  private static int jvmIntegerId;
+  private static long jvmLongId;
 
-  static {
-    JVMPID = jvmProcessId();
-    mac = macAddress();
+  private static void _initialize() {
     macLong = macAddressAsLong();
     macInt = macAddressAsInt();
     jvmIntegerId = jvmInstanceIdAsInteger();
@@ -71,7 +70,46 @@ public final class JvmProcessId {
     jvmLongId = jvmInstanceIdAsLong();
   }
 
-  private JvmProcessId() {
+  static {
+    JVMPID = jvmProcessId();
+    mac = macAddress();
+    //_initialize();
+    macLong = macAddressAsLong();
+    macInt = macAddressAsInt();
+    jvmIntegerId = jvmInstanceIdAsInteger();
+    jvmByteId = jvmInstanceIdAsByte();
+    jvmLongId = jvmInstanceIdAsLong();
+  }
+
+  public static int getJvmPID() {
+    return JVMPID;
+  }
+
+  public static byte[] getMac() {
+    return mac;
+  }
+
+  public static long getMacLong() {
+    return macLong;
+  }
+
+  public static int getMacInt() {
+    return macInt;
+  }
+
+  public static byte getJvmByteId() {
+    return jvmByteId;
+  }
+
+  public static int getJvmIntegerId() {
+    return jvmIntegerId;
+  }
+
+  public static long getJvmLongId() {
+    return jvmLongId;
+  }
+
+  private JvmProcessMacIds() {
   }
 
   /**
@@ -79,8 +117,8 @@ public final class JvmProcessId {
    *
    * @return one id as much as possible unique
    */
-  public static byte jvmInstanceIdAsByte() {
-    return (byte) (Integer.hashCode(jvmIntegerId) & 0xFF);
+  private static byte jvmInstanceIdAsByte() {
+    return (byte) (Integer.hashCode(jvmIntegerId) & BYTE_FILTER);
   }
 
   /**
@@ -88,15 +126,15 @@ public final class JvmProcessId {
    *
    * @return one id as much as possible unique
    */
-  public static int jvmInstanceIdAsInteger() {
-    final long id = 31L * jvmProcessId() + macAddressAsInt();
+  private static int jvmInstanceIdAsInteger() {
+    final long id = 31L * JVMPID + macInt;
     return Long.hashCode(id);
   }
 
   /**
    * @return the JVM Process ID
    */
-  public static int jvmProcessId() {
+  private static int jvmProcessId() {
     // Note: may fail in some JVM implementations
     // something like '<pid>@<hostname>', at least in SUN / Oracle JVMs
     try {
@@ -110,20 +148,21 @@ public final class JvmProcessId {
       int processId = -1;
       processId = parseProcessId(processId, value);
       if (processId < 0 || processId > MAX_PID) {
-        processId = RandomUtil.RANDOM.nextInt(MAX_PID + 1);
+        processId = RandomUtil.RANDOM.nextInt(MAX_PID);
       }
       return processId;
     } catch (final Throwable e) {//NOSONAR
       SysErrLogger.FAKE_LOGGER.syserr(e);
-      return RandomUtil.RANDOM.nextInt(MAX_PID + 1);
+      return RandomUtil.RANDOM.nextInt(MAX_PID);
     }
   }
 
   /**
-   * @return MAC address as int (truncated to 4 bytes instead of 6)
+   * @return MAC address as int (truncated to 4 bytes instead of 8)
    */
-  public static int macAddressAsInt() {
-    return (mac[3] & 0xFF) << 24 | (mac[2] & 0xFF) << 16 | (mac[1] & 0xFF) << 8 | mac[0] & 0xFF;
+  private static int macAddressAsInt() {
+    return (mac[3] & BYTE_FILTER) << 24 | (mac[2] & BYTE_FILTER) << 16 | (mac[1] & BYTE_FILTER) << 8 |
+           mac[0] & BYTE_FILTER;
   }
 
   private static ClassLoader getSystemClassLoader() {
@@ -173,7 +212,7 @@ public final class JvmProcessId {
       // Malformed input.
     }
     if (processId < 0 || processId > MAX_PID) {
-      processId = -1;
+      processId = RandomUtil.RANDOM.nextInt(MAX_PID);
     }
     return processId;
   }
@@ -183,22 +222,30 @@ public final class JvmProcessId {
    *
    * @return one id as much as possible unique
    */
-  public static long jvmInstanceIdAsLong() {
-    return (jvmProcessId() << 6 * 8 & 0xFFFF) + macAddressAsLong();
+  private static long jvmInstanceIdAsLong() {
+    return (macLong & 0xFFFFFFFFFFFFL) + ((long) JVMPID << 6 * 8 & 0xFFFF);
   }
 
   /**
-   * @return MAC address as long (6 bytes only)
+   * @return MAC address as long
    */
-  public static long macAddressAsLong() {
-    return (long) (mac[5] & 0xFF) << 40 | (long) (mac[4] & 0xFF) << 32 | (long) (mac[3] & 0xFF) << 24 |
-           (mac[2] & 0xFF) << 16 | (mac[1] & 0xFF) << 8 | mac[0] & 0xFF;
+  private static long macAddressAsLong() {
+    long value = (long) (mac[5] & BYTE_FILTER) << 40 | (long) (mac[4] & BYTE_FILTER) << 32 |
+                 (long) (mac[3] & BYTE_FILTER) << 24 | (long) (mac[2] & BYTE_FILTER) << 16 |
+                 (long) (mac[1] & BYTE_FILTER) << 8 | mac[0] & BYTE_FILTER;
+    if (mac.length > 6) {
+      value |= (long) (mac[6] & BYTE_FILTER) << 48;
+      if (mac.length > 7) {
+        return (long) (mac[7] & BYTE_FILTER) << 56 | value;
+      }
+    }
+    return value;
   }
 
   /**
    * @return the mac address if possible, else random values
    */
-  public static byte[] macAddress() {
+  private static byte[] macAddress() {
     try {
       byte[] machineId = null;
       final String customMachineId = getMachineId();
@@ -219,17 +266,18 @@ public final class JvmProcessId {
     // Strip separators.
     value = COMPILE.matcher(value).replaceAll("");
 
-    final byte[] machineId = new byte[MACHINE_ID_LEN];
-    for (int i = 0; i < value.length() && i < MACHINE_ID_LEN; i += 2) {
-      machineId[i] = (byte) Integer.parseInt(value.substring(i, i + 2), 16);
+    final int len = value.length();
+    final int lenJ = len / 2;
+    final byte[] machineId = new byte[lenJ];
+    for (int j = 0, i = 0; i < len && j < lenJ; i += 2, j++) {
+      machineId[j] = (byte) Integer.parseInt(value.substring(i, i + 2), 16);
     }
-
     return machineId;
   }
 
   private static byte[] defaultMachineId() {
     // Find the best MAC address available.
-    final byte[] notFound = { -1 };
+    final byte[] notFound = EMPTY_BYTES;
     byte[] bestMacAddr = notFound;
     InetAddress bestInetAddr;
     try {
@@ -246,9 +294,18 @@ public final class JvmProcessId {
            i.hasMoreElements(); ) {
         final NetworkInterface iface = i.nextElement();
         // Use the interface with proper INET addresses only.
-        final Enumeration<InetAddress> addrs = iface.getInetAddresses();
-        if (addrs.hasMoreElements()) {
-          final InetAddress a = addrs.nextElement();
+        Enumeration<InetAddress> addresses =
+            AccessController.doPrivileged(new PrivilegedAction<Enumeration<InetAddress>>() {
+              @Override
+              public Enumeration<InetAddress> run() {
+                return iface.getInetAddresses();
+              }
+            });
+        if (addresses == null) {
+          addresses = Collections.enumeration(Collections.emptyList());
+        }
+        if (addresses.hasMoreElements()) {
+          final InetAddress a = addresses.nextElement();
           if (!a.isLoopbackAddress()) {
             ifaces.put(iface, a);
           }
@@ -267,8 +324,13 @@ public final class JvmProcessId {
 
       final byte[] macAddr;
       try {
-        macAddr = iface.getHardwareAddress();
-      } catch (final SocketException e) {
+        macAddr = AccessController.doPrivileged(new PrivilegedExceptionAction<byte[]>() {
+          @Override
+          public byte[] run() throws SocketException {
+            return iface.getHardwareAddress();
+          }
+        });
+      } catch (final PrivilegedActionException ignore) {
         continue;
       }
 
@@ -326,19 +388,23 @@ public final class JvmProcessId {
     if ((candidate[0] & 1) != 0) {
       return 1;
     }
+    // Current is empty
+    if (current.length == 0) {
+      return -1;
+    }
     // Prefer globally unique address.
-    if ((current[0] & 2) == 0) {
-      if ((candidate[0] & 2) == 0) {
+    if ((candidate[0] & 2) == 0) {
+      if ((current[0] & 2) == 0) {
         // Both current and candidate are globally unique addresses.
         return 0;
       } else {
         // Only current is globally unique.
-        return 1;
+        return -1;
       }
     } else {
-      if ((candidate[0] & 2) == 0) {
+      if ((current[0] & 2) == 0) {
         // Only candidate is globally unique.
-        return -1;
+        return 1;
       } else {
         // Both current and candidate are non-unique.
         return 0;
@@ -373,22 +439,25 @@ public final class JvmProcessId {
   }
 
   /**
-   * Up to the 6 first bytes will be used. If Null or less than 6 bytes, extra
-   * bytes will be randomly generated.
+   * Up to the 8 first bytes will be used. If Null or less than 6 bytes, extra
+   * bytes will be randomly generated, up to 6 bytes.
    *
-   * @param mac the MAC address in byte format (up to the 6 first
-   *     bytes will
-   *     be used)
+   * @param mac the MAC address in byte format (up to the 8 first
+   *     bytes will be used)
    */
   public static synchronized void setMac(final byte[] mac) {
     if (mac == null) {
-      JvmProcessId.mac = RandomUtil.getRandom(MACHINE_ID_LEN);
+      JvmProcessMacIds.mac = RandomUtil.getRandom(MACHINE_ID_LEN);
     } else {
-      JvmProcessId.mac = Arrays.copyOf(mac, MACHINE_ID_LEN);
-      for (int i = mac.length; i < MACHINE_ID_LEN; i++) {
-        JvmProcessId.mac[i] = (byte) RandomUtil.RANDOM.nextInt(256);
+      if (mac.length < 6) {
+        JvmProcessMacIds.mac = Arrays.copyOf(mac, 6);
+        for (int i = mac.length; i < 6; i++) {
+          JvmProcessMacIds.mac[i] = (byte) RandomUtil.RANDOM.nextInt(256);
+        }
+      } else {
+        JvmProcessMacIds.mac = Arrays.copyOf(mac, Math.min(mac.length, MACHINE_ID_LEN));
       }
     }
-    macInt = macAddressAsInt();
+    _initialize();
   }
 }

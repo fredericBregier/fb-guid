@@ -70,14 +70,14 @@ public class GUIDTest {
       id = new GUID();
       assertEquals(VERSION, id.getVersion());
       assertEquals(0, id.getTenantId());
-      assertEquals(JvmProcessId.macAddressAsInt(), id.getPlatformId());
+      assertEquals(JvmProcessMacIds.getMacInt(), id.getPlatformId());
       int pid = id.getProcessId();
       byte[] platformId = id.getPlatformIdAsBytes();
 
       id = new GUID(100);
       assertEquals(VERSION, id.getVersion());
       assertEquals(100, id.getTenantId());
-      assertEquals(JvmProcessId.macAddressAsInt(), id.getPlatformId());
+      assertEquals(JvmProcessMacIds.getMacInt(), id.getPlatformId());
       assertEquals(pid, id.getProcessId());
       assertArrayEquals(platformId, id.getPlatformIdAsBytes());
     } catch (final InvalidArgumentRuntimeException e) {

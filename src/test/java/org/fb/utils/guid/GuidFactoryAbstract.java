@@ -84,14 +84,14 @@ public abstract class GuidFactoryAbstract {
       id = guidFactory.newGuid();
       assertEquals(VERSION, id.getVersion());
       assertEquals(0, id.getTenantId());
-      assertEquals(getMasked(guidFactory.getPlatformSize(), JvmProcessId.macAddressAsLong()),
+      assertEquals(getMasked(guidFactory.getPlatformSize(), JvmProcessMacIds.getMacLong()),
                    id.getPlatformId());
       int pid = id.getProcessId();
 
       id = guidFactory.newGuid(100);
       assertEquals(VERSION, id.getVersion());
       assertEquals(100, id.getTenantId());
-      assertEquals(getMasked(guidFactory.getPlatformSize(), JvmProcessId.macAddressAsLong()),
+      assertEquals(getMasked(guidFactory.getPlatformSize(), JvmProcessMacIds.getMacLong()),
                    id.getPlatformId());
       assertEquals(pid, id.getProcessId());
     } catch (final InvalidArgumentRuntimeException e) {

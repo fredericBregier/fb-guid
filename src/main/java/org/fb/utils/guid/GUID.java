@@ -34,7 +34,7 @@ import static org.fb.utils.guid.GuidFactory.*;
  * - 1 bytes = Version (8)<br>
  * - 4 bytes = Tenant Id (32)<br>
  * - 4 bytes = Platform Id (32)<br>
- * - 3 bytes = -2 bits JVM PID (22)<br>
+ * - 3 bytes = JVM PID (24)<br>
  * - 6 bytes = timestamp (so up to 8 925 years after Time 0 so year 10 895)<br>
  * - 3 bytes = counter against collision (so up to 16 000 Millions/s) <br>
  * This implementation aims to get guarantee unique UUID globally (so GUUID)
@@ -206,7 +206,7 @@ public final class GUID implements Comparable<GUID> {
    * Platform Id and timestamp with no tenant
    */
   public GUID() {
-    this(0, JvmProcessId.macAddressAsInt() & MASK_INT);
+    this(0, JvmProcessMacIds.getMacInt() & MASK_INT);
   }
 
   /**
@@ -233,7 +233,7 @@ public final class GUID implements Comparable<GUID> {
     // 1 bytes = Version (8)
     bguid[HEADER_POS] = (byte) VERSION;
 
-    // 4 bytes - 2 bits = Domain (30)
+    // 4 bytes = Domain (32)
     int value = tenantId;
     bguid[TENANT_POS + 3] = (byte) (value & BYTE_MASK);
     value >>>= BYTE_SIZE;
@@ -243,7 +243,7 @@ public final class GUID implements Comparable<GUID> {
     value >>>= BYTE_SIZE;
     bguid[TENANT_POS] = (byte) (value & BYTE_MASK);
 
-    // 4 bytes = -1 bit Platform (31)
+    // 4 bytes = Platform (32)
     value = platformId;
     bguid[PLATFORM_POS + 3] = (byte) (value & BYTE_MASK);
     value >>>= BYTE_SIZE;
@@ -253,16 +253,15 @@ public final class GUID implements Comparable<GUID> {
     value >>>= BYTE_SIZE;
     bguid[PLATFORM_POS] = (byte) (value & BYTE_MASK);
 
-    // 3 bytes = -2 bits JVMPID (22)
-    value = JvmProcessId.JVMPID;
+    // 3 bytes = JVMPID (24)
+    value = JvmProcessMacIds.getJvmPID();
     bguid[PID_POS + 2] = (byte) (value & BYTE_MASK);
     value >>>= BYTE_SIZE;
     bguid[PID_POS + 1] = (byte) (value & BYTE_MASK);
     value >>>= BYTE_SIZE;
     bguid[PID_POS] = (byte) (value & BYTE_MASK);
 
-    // 6 bytes = timestamp (so up to 8 925 years after Time 0 so year 10
-    // 895)
+    // 6 bytes = timestamp (so up to 8 925 years after Time 0 so year 10895)
     long lvalue = time;
     bguid[TIME_POS + 5] = (byte) (lvalue & BYTE_MASK);
     lvalue >>>= BYTE_SIZE;
@@ -304,7 +303,7 @@ public final class GUID implements Comparable<GUID> {
    *     of range
    */
   public GUID(final int tenantId) {
-    this(tenantId, JvmProcessId.macAddressAsInt() & MASK_INT);
+    this(tenantId, JvmProcessMacIds.getMacInt() & MASK_INT);
   }
 
   /**
@@ -312,6 +311,18 @@ public final class GUID implements Comparable<GUID> {
    */
   public static int getKeySize() {
     return KEYSIZE;
+  }
+
+  public static short getKey16Size() {
+    return KEYB16SIZE;
+  }
+
+  public static short getKey32Size() {
+    return KEYB32SIZE;
+  }
+
+  public static short getKey64Size() {
+    return KEYB64SIZE;
   }
 
   /**

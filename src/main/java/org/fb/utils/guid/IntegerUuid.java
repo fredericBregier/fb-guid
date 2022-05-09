@@ -150,4 +150,9 @@ public final class IntegerUuid {
     value |= (long) uuid[3] & 0xFF;
     return value;
   }
+
+  public static short getKeySize() {
+    return UUIDSIZE;
+  }
+
 }

@@ -200,7 +200,7 @@ public final class TinyGUID implements Comparable<TinyGUID> {
    * Platform Id and timestamp with no tenant
    */
   public TinyGUID() {
-    this((short) 0, JvmProcessId.jvmIntegerId & MASK_INT);
+    this((short) 0, JvmProcessMacIds.getJvmIntegerId() & MASK_INT);
   }
 
   /**
@@ -290,7 +290,7 @@ public final class TinyGUID implements Comparable<TinyGUID> {
    *     of range
    */
   public TinyGUID(final short tenantId) {
-    this(tenantId, JvmProcessId.jvmIntegerId & MASK_INT);
+    this(tenantId, JvmProcessMacIds.getJvmIntegerId() & MASK_INT);
   }
 
   public TinyGUID(final int tenantId, final int platformId) {
@@ -302,6 +302,18 @@ public final class TinyGUID implements Comparable<TinyGUID> {
    */
   public static int getKeySize() {
     return KEYSIZE;
+  }
+
+  public static short getKey16Size() {
+    return KEYB16SIZE;
+  }
+
+  public static short getKey32Size() {
+    return KEYB32SIZE;
+  }
+
+  public static short getKey64Size() {
+    return KEYB64SIZE;
   }
 
   /**
