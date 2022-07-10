@@ -73,7 +73,6 @@ public final class JvmProcessMacIds {
   static {
     JVMPID = jvmProcessId();
     mac = macAddress();
-    //_initialize();
     macLong = macAddressAsLong();
     macInt = macAddressAsInt();
     jvmIntegerId = jvmInstanceIdAsInteger();

@@ -1,16 +1,12 @@
 package org.fb.utils.various;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ChunkInputStreamTest {
-  @Rule(order = Integer.MIN_VALUE)
-  public TestWatcher watchman = new TestWatcherJunit4();
 
   @Test
   public void testChunkInputStream() {
@@ -19,7 +15,30 @@ public class ChunkInputStreamTest {
     long read = 0;
     byte[] bytes = new byte[65536];
     try (FakeInputStream inputStream = new FakeInputStream(len, (byte) 'A')) {
-      try (ChunkInputStream chunkInputStream = new ChunkInputStream(inputStream, chunk)) {
+      try (ChunkInputStream chunkInputStream = new ChunkInputStream(inputStream, 0, chunk)) {
+        while (chunkInputStream.nextChunk()) {
+          long subread;
+          long chunkRead = 0;
+          assertTrue(chunkInputStream.available() > 0);
+          assertEquals('A', chunkInputStream.read());
+          chunkRead++;
+          while ((subread = chunkInputStream.read(bytes)) >= 0) {
+            chunkRead += subread;
+          }
+          assertEquals(chunk, chunkRead);
+          assertEquals(-1, chunkInputStream.read());
+          assertEquals(0, chunkInputStream.available());
+          assertFalse(chunkInputStream.markSupported());
+          read += chunkRead;
+        }
+      }
+      assertEquals(len, read);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    read = 0;
+    try (FakeInputStream inputStream = new FakeInputStream(len, (byte) 'A')) {
+      try (ChunkInputStream chunkInputStream = new ChunkInputStream(inputStream, len, chunk)) {
         while (chunkInputStream.nextChunk()) {
           long subread;
           long chunkRead = 0;
@@ -48,7 +67,20 @@ public class ChunkInputStreamTest {
     long chunk = 10 * 1024 * 1024;
     long read = 0;
     try (FakeInputStream inputStream = new FakeInputStream(len, (byte) 'A')) {
-      try (ChunkInputStream chunkInputStream = new ChunkInputStream(inputStream, chunk)) {
+      try (ChunkInputStream chunkInputStream = new ChunkInputStream(inputStream, 0, chunk)) {
+        while (chunkInputStream.nextChunk()) {
+          long chunkRead = FakeInputStream.consumeAll(chunkInputStream);
+          assertEquals(chunk, chunkRead);
+          read += chunkRead;
+        }
+      }
+      assertEquals(len, read);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    read = 0;
+    try (FakeInputStream inputStream = new FakeInputStream(len, (byte) 'A')) {
+      try (ChunkInputStream chunkInputStream = new ChunkInputStream(inputStream, len, chunk)) {
         while (chunkInputStream.nextChunk()) {
           long chunkRead = FakeInputStream.consumeAll(chunkInputStream);
           assertEquals(chunk, chunkRead);

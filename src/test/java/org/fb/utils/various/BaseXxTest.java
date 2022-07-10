@@ -17,55 +17,43 @@
 package org.fb.utils.various;
 
 import org.fb.utils.exceptions.InvalidArgumentRuntimeException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BaseXxTest {
-  @Rule(order = Integer.MIN_VALUE)
-  public TestWatcher watchman = new TestWatcherJunit4();
-
-
-  @Test(expected = InvalidArgumentRuntimeException.class)
+  @Test
   public void testBase16() throws IOException {
-    BaseXx.getBase16(null);
-    fail("EXPECTING_EXCEPTION_ILLEGAL_ARGUMENT_EXCEPTION");
+    assertThrows(InvalidArgumentRuntimeException.class, () -> BaseXx.getBase16(null));
   }
 
-  @Test(expected = InvalidArgumentRuntimeException.class)
+  @Test
   public void testBase32() throws FileNotFoundException {
-    BaseXx.getBase32(null);
-    fail("EXPECTING_EXCEPTION_ILLEGAL_ARGUMENT_EXCEPTION");
+    assertThrows(InvalidArgumentRuntimeException.class, () -> BaseXx.getBase32(null));
   }
 
 
-  @Test(expected = InvalidArgumentRuntimeException.class)
+  @Test
   public void testBase64() throws FileNotFoundException {
-    BaseXx.getBase64(null);
-    fail("EXPECTING_EXCEPTION_ILLEGAL_ARGUMENT_EXCEPTION");
+    assertThrows(InvalidArgumentRuntimeException.class, () -> BaseXx.getBase64(null));
   }
 
-  @Test(expected = InvalidArgumentRuntimeException.class)
+  @Test
   public void testFromBase16() throws IOException {
-    BaseXx.getFromBase16(null);
-    fail("EXPECTING_EXCEPTION_ILLEGAL_ARGUMENT_EXCEPTION");
+    assertThrows(InvalidArgumentRuntimeException.class, () -> BaseXx.getFromBase16(null));
   }
 
-  @Test(expected = InvalidArgumentRuntimeException.class)
+  @Test
   public void testFromBase32() throws FileNotFoundException {
-    BaseXx.getFromBase32(null);
-    fail("EXPECTING_EXCEPTION_ILLEGAL_ARGUMENT_EXCEPTION");
+    assertThrows(InvalidArgumentRuntimeException.class, () -> BaseXx.getFromBase32(null));
   }
 
-  @Test(expected = InvalidArgumentRuntimeException.class)
+  @Test
   public void testFromBase64() throws FileNotFoundException {
-    BaseXx.getFromBase64(null);
-    fail("EXPECTING_EXCEPTION_ILLEGAL_ARGUMENT_EXCEPTION");
+    assertThrows(InvalidArgumentRuntimeException.class, () -> BaseXx.getFromBase64(null));
   }
 
   @Test

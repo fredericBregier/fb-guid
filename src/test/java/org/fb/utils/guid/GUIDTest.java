@@ -18,16 +18,13 @@ package org.fb.utils.guid;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.fb.utils.exceptions.InvalidArgumentRuntimeException;
 import org.fb.utils.json.JsonHandler;
-import org.fb.utils.various.TestWatcherJunit4;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GUIDTest {
   private static final int NB = 1000000;
@@ -53,8 +50,6 @@ public class GUIDTest {
   };
   private static final int VERSION = 1 & 0x1F;
   private static final int HEXLENGTH = GUID.KEYSIZE * 2;
-  @Rule(order = Integer.MIN_VALUE)
-  public TestWatcher watchman = new TestWatcherJunit4();
 
   @Test
   public void testStructure() {
@@ -199,11 +194,11 @@ public class GUIDTest {
     }
     final String json = JsonHandler.writeAsString(guid);
     final GUID uuid2 = JsonHandler.getFromString(json, GUID.class);
-    assertEquals("Json check", guid, uuid2);
+    assertEquals(guid, uuid2);
     final GUID guid2 = new GUID(guid.getId());
     final String json2 = JsonHandler.writeAsString(guid2);
     final GUID uuid3 = JsonHandler.getFromString(json2, GUID.class);
-    assertEquals("Json check", guid, uuid3);
+    assertEquals(guid, uuid3);
   }
 
   @Test

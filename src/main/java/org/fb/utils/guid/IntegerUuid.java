@@ -55,7 +55,7 @@ public final class IntegerUuid {
    */
   public IntegerUuid() {
     // atomically
-    final int count = getCounter();
+    var count = getCounter();
     uuid[0] = (byte) (count >> 24);
     uuid[1] = (byte) (count >> 16);
     uuid[2] = (byte) (count >> 8);

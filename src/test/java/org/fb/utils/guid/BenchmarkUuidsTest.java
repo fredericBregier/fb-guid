@@ -18,7 +18,7 @@ package org.fb.utils.guid;
 
 import org.fb.utils.guid.GuidFactory.GUID_CONFIGURATION;
 import org.fb.utils.guid.GuidFactory.Guid;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class BenchmarkUuidsTest {
   private static final int NB = 20000000;
