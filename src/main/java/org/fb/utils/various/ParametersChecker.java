@@ -129,21 +129,21 @@ public final class ParametersChecker {
   }
 
   /**
-   * Check external argument (null is consider as correct)
+   * Check external argument (null is considered as correct)
    *
-   * @param strings
+   * @param strings the String array to check
    *
    * @throws InvalidArgumentRuntimeException if invalid
    */
   public static void checkSanityString(final String... strings) throws InvalidArgumentRuntimeException {
-    for (final String field : strings) {
+    for (var field : strings) {
       if (isEmpty(field)) {
         continue;
       }
       if (UNPRINTABLE_PATTERN.matcher(field).find()) {
         throw new InvalidArgumentRuntimeException("Invalid input bytes");
       }
-      for (final String rule : RULES) {
+      for (var rule : RULES) {
         if (rule != null && field.contains(rule)) {
           throw new InvalidArgumentRuntimeException("Invalid tag sanity check");
         }

@@ -16,53 +16,42 @@
 
 package org.fb.utils.various;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SysErrLoggerTest {
   private static final String NOT_EMPTY = "Not empty";
   private static final StringBuilder buf = new StringBuilder();
   private static PrintStream err;
   private static PrintStream out;
-  @Rule(order = Integer.MIN_VALUE)
-  public TestWatcher watchman = new TestWatcherJunit4();
 
-  @BeforeClass
+  @BeforeAll
   public static void setUpBeforeClass() {
     err = System.err; // NOSONAR since Logger test
-    try {
-      System.setErr(new PrintStream(new OutputStream() {
-        @Override
-        public void write(final int b) {
-          buf.append((char) b);
-        }
-      }, true, "UTF-8"));
-    } catch (final UnsupportedEncodingException ignore) {
-      // Ignore
-    }
+    System.setErr(new PrintStream(new OutputStream() {
+      @Override
+      public void write(final int b) {
+        buf.append((char) b);
+      }
+    }, true, StandardCharsets.UTF_8));
     out = System.out; // NOSONAR since Logger test
-    try {
-      System.setOut(new PrintStream(new OutputStream() {
-        @Override
-        public void write(final int b) {
-          buf.append((char) b);
-        }
-      }, true, "UTF-8"));
-    } catch (final UnsupportedEncodingException ignore) {
-      // Ignore
-    }
+    System.setOut(new PrintStream(new OutputStream() {
+      @Override
+      public void write(final int b) {
+        buf.append((char) b);
+      }
+    }, true, StandardCharsets.UTF_8));
   }
 
-  @AfterClass
+  @AfterAll
   public static void tearDownAfterClass() {
     System.setErr(err);
     System.setOut(out);

@@ -16,9 +16,7 @@
 
 package org.fb.utils.various;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,12 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RandomUtilTest {
   private static final byte[] BYTES_0_LENGTH = {};
-  @Rule(order = Integer.MIN_VALUE)
-  public TestWatcher watchman = new TestWatcherJunit4();
 
   @Test
   public void testRandom() {
@@ -112,9 +108,7 @@ public class RandomUtilTest {
     assertEquals(-1, emptyIS.read());
     assertEquals(-1, emptyIS.read(buffer));
     assertEquals(-1, emptyIS.read(buffer, 0, buffer.length));
-    assertTrue(emptyIS.markSupported());
-    emptyIS.mark(5);
-    emptyIS.reset();
+    assertFalse(emptyIS.markSupported());
     emptyIS.close();
 
     // No error

@@ -63,7 +63,7 @@ public final class SystemPropertyUtil {
   public static boolean getBoolean(final String key, final boolean def) {
     ParametersChecker.checkParameter("Key", key);
 
-    String value = PROPS.getProperty(key);
+    var value = PROPS.getProperty(key);
     if (value == null) {
       return def;
     }
@@ -100,7 +100,7 @@ public final class SystemPropertyUtil {
   public static int getInt(final String key, final int def) {
     ParametersChecker.checkParameter("Key", key);
 
-    String value = PROPS.getProperty(key);
+    var value = PROPS.getProperty(key);
     if (value == null) {
       return def;
     }
@@ -119,7 +119,9 @@ public final class SystemPropertyUtil {
         USING_THE_DEFAULT_VALUE2 + def);
 
     return def;
-  }  private static final Platform mOs = getOS();
+  }
+
+  private static final Platform mOs = getOS();
 
   /**
    * Returns the value of the Java system property with the specified {@code
@@ -133,7 +135,7 @@ public final class SystemPropertyUtil {
   public static long getLong(final String key, final long def) {
     ParametersChecker.checkParameter("Key", key);
 
-    String value = PROPS.getProperty(key);
+    var value = PROPS.getProperty(key);
     if (value == null) {
       return def;
     }
@@ -314,7 +316,7 @@ public final class SystemPropertyUtil {
    */
   public static boolean get(final String key, final boolean def) {
     ParametersChecker.checkParameter("Key", key);
-    String value = PROPS.getProperty(key);
+    var value = PROPS.getProperty(key);
     if (value == null) {
       return def;
     }
@@ -384,7 +386,7 @@ public final class SystemPropertyUtil {
    */
   public static int get(final String key, final int def) {
     ParametersChecker.checkParameter("Key", key);
-    String value = PROPS.getProperty(key);
+    var value = PROPS.getProperty(key);
     if (value == null) {
       return def;
     }
@@ -452,7 +454,7 @@ public final class SystemPropertyUtil {
    */
   public static long get(final String key, final long def) {
     ParametersChecker.checkParameter("Key", key);
-    String value = PROPS.getProperty(key);
+    var value = PROPS.getProperty(key);
     if (value == null) {
       return def;
     }
@@ -612,7 +614,7 @@ public final class SystemPropertyUtil {
   public static Platform getOS() {
     if (mOs == null) {
       Platform mOs2 = Platform.UNSUPPORTED;
-      String os = "";
+      var os = "";
       try {
         os = System.getProperty("os.name").toLowerCase();
       } catch (final Exception ignored) {
@@ -695,8 +697,6 @@ public final class SystemPropertyUtil {
      */
     UNSUPPORTED
   }
-
-
 
 
 }

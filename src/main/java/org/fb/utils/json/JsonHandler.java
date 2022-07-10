@@ -112,7 +112,7 @@ public final class JsonHandler {
    * @return the Json escaped representation of the object
    */
   public static String writeAsStringEscaped(final Object object) throws JsonProcessingException {
-    final String temp = writeAsString(object);
+    var temp = writeAsString(object);
     return temp.replaceAll("[\\\\]+", "\\\\");
   }
 

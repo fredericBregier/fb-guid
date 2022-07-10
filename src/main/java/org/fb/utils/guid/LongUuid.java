@@ -81,9 +81,9 @@ public final class LongUuid {
   }
 
   public static long getLongUuid() {
-    final long time = System.currentTimeMillis();
+    var time = System.currentTimeMillis();
     // atomically
-    final int count = getCounter();
+    var count = getCounter();
     // Jvmd Id on 4 first bits
     // Timestamp on 40 bits (2^40 ms = 35 years rolling)
     // Count on 20 bits => 2^20 (1M / ms)
@@ -115,7 +115,7 @@ public final class LongUuid {
   }
 
   public LongUuid(final String idsource) {
-    final String id = idsource.trim();
+    var id = idsource.trim();
 
     if (id.length() != UUIDSIZE * 2) {
       throw new InvalidArgumentRuntimeException("Attempted to parse malformed UUID: " + id);

@@ -18,9 +18,13 @@ package org.fb.utils.various;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 
 public class FakeInputStream extends InputStream {
+  private static final int BUF_SIZE = 65536;
+  private static final int MAX_AVAILABLE = 1024 * 1024 * 100;
+  private static final String ARGS_SHALL_NOT_BE_NULL = "Args shall not be null";
   private final byte b;
   private long toSend;
 
@@ -31,9 +35,9 @@ public class FakeInputStream extends InputStream {
 
   public static long consumeAll(final InputStream inputStream) throws IOException {
     long len = 0;
-    long read;
-    final byte[] bytes = new byte[65536];
-    while ((read = inputStream.read(bytes, 0, 65536)) >= 0) {
+    var read = 0L;
+    var bytes = new byte[BUF_SIZE];
+    while ((read = inputStream.read(bytes, 0, BUF_SIZE)) >= 0) {
       len += read;
     }
     return len;
@@ -41,13 +45,13 @@ public class FakeInputStream extends InputStream {
 
   @Override
   public int read(final byte[] bytes) throws IOException {
-    ParametersChecker.checkParameterNullOnly("Args shall not be null", bytes);
+    ParametersChecker.checkParameterNullOnly(ARGS_SHALL_NOT_BE_NULL, bytes);
     return read(bytes, 0, bytes.length);
   }
 
   @Override
   public int read(final byte[] bytes, final int off, final int len) throws IOException {
-    ParametersChecker.checkParameterNullOnly("Args shall not be null", bytes);
+    ParametersChecker.checkParameterNullOnly(ARGS_SHALL_NOT_BE_NULL, bytes);
     if (toSend <= 0) {
       return -1;
     }
@@ -59,7 +63,7 @@ public class FakeInputStream extends InputStream {
 
   @Override
   public int available() throws IOException {
-    return toSend >= Integer.MAX_VALUE? Integer.MAX_VALUE : (int) toSend;
+    return (int) Math.min(MAX_AVAILABLE, toSend);
   }
 
   @Override
@@ -73,7 +77,7 @@ public class FakeInputStream extends InputStream {
       return -1;
     }
     toSend--;
-    return b;
+    return b & 0xFF;
   }
 
   @Override
@@ -86,5 +90,19 @@ public class FakeInputStream extends InputStream {
     final long read = Math.min(toSend, n);
     toSend -= read;
     return read;
+  }
+
+  @Override
+  public long transferTo(final OutputStream out) throws IOException {
+    ParametersChecker.checkParameterNullOnly(ARGS_SHALL_NOT_BE_NULL, out);
+    final long readFinal = toSend;
+    var bytes = new byte[BUF_SIZE];
+    Arrays.fill(bytes, b);
+    var read = (int) skip(BUF_SIZE);
+    while (read > 0) {
+      out.write(bytes, 0, read);
+      read = (int) skip(BUF_SIZE);
+    }
+    return readFinal;
   }
 }

@@ -147,15 +147,15 @@ public final class GUID implements Comparable<GUID> {
     if (idsource == null) {
       throw new InvalidArgumentRuntimeException("Empty argument");
     }
-    final String id = idsource.trim();
+    var id = idsource.trim();
     if (id.startsWith(ARK)) {
-      String ids = id;
+      var ids = id;
       ids = ids.substring(ARK.length());
-      final int separator = ids.indexOf('/');
+      var separator = ids.indexOf('/');
       if (separator <= 0) {
         throw new InvalidArgumentRuntimeException(ATTEMPTED_TO_PARSE_MALFORMED_ARK_GUID + id);
       }
-      int tenantId;
+      var tenantId = 0;
       try {
         tenantId = Integer.parseInt(ids.substring(0, separator));
       } catch (final NumberFormatException e) {
@@ -163,7 +163,7 @@ public final class GUID implements Comparable<GUID> {
       }
       // BASE32
       ids = ids.substring(separator + 1);
-      final byte[] base32 = BaseXx.getFromBase32(ids);
+      var base32 = BaseXx.getFromBase32(ids);
       if (base32.length != KEYSIZE - TENANT_SIZE) {
         throw new InvalidArgumentRuntimeException(ATTEMPTED_TO_PARSE_MALFORMED_ARK_GUID + id);
       }
@@ -181,7 +181,7 @@ public final class GUID implements Comparable<GUID> {
                        PLATFORM_SIZE + PID_SIZE + TIME_SIZE + COUNTER_SIZE);
       return this;
     }
-    final int len = id.length();
+    var len = id.length();
     try {
       if (len == KEYB16SIZE) {
         // HEXA BASE16
@@ -228,13 +228,13 @@ public final class GUID implements Comparable<GUID> {
     }
 
     // atomically
-    final long time = System.currentTimeMillis();
-    final int count = getNewCounter();
+    var time = System.currentTimeMillis();
+    var count = getNewCounter();
     // 1 bytes = Version (8)
     bguid[HEADER_POS] = (byte) VERSION;
 
     // 4 bytes = Domain (32)
-    int value = tenantId;
+    var value = tenantId;
     bguid[TENANT_POS + 3] = (byte) (value & BYTE_MASK);
     value >>>= BYTE_SIZE;
     bguid[TENANT_POS + 2] = (byte) (value & BYTE_MASK);
@@ -262,7 +262,7 @@ public final class GUID implements Comparable<GUID> {
     bguid[PID_POS] = (byte) (value & BYTE_MASK);
 
     // 6 bytes = timestamp (so up to 8 925 years after Time 0 so year 10895)
-    long lvalue = time;
+    var lvalue = time;
     bguid[TIME_POS + 5] = (byte) (lvalue & BYTE_MASK);
     lvalue >>>= BYTE_SIZE;
     bguid[TIME_POS + 4] = (byte) (lvalue & BYTE_MASK);
@@ -363,7 +363,7 @@ public final class GUID implements Comparable<GUID> {
    * @return the Ark Name part of Ark representation
    */
   public String toArkName() {
-    final byte[] temp = new byte[KEYSIZE - TENANT_SIZE];
+    var temp = new byte[KEYSIZE - TENANT_SIZE];
     System.arraycopy(bguid, HEADER_POS, temp, 0, HEADER_SIZE);
     System.arraycopy(bguid, PLATFORM_POS, temp, HEADER_SIZE,
                      PLATFORM_SIZE + PID_SIZE + TIME_SIZE + COUNTER_SIZE);
@@ -454,16 +454,16 @@ public final class GUID implements Comparable<GUID> {
 
   @Override
   public int compareTo(final GUID guid) {
-    final int id = getTenantId();
-    final int id2 = guid.getTenantId();
+    var id = getTenantId();
+    var id2 = guid.getTenantId();
     if (id != id2) {
       return id < id2? -1 : 1;
     }
-    final long ts = getTimestamp();
-    final long ts2 = guid.getTimestamp();
+    var ts = getTimestamp();
+    var ts2 = guid.getTimestamp();
     if (ts == ts2) {
-      final int ct = getCounter();
-      final int ct2 = guid.getCounter();
+      var ct = getCounter();
+      var ct2 = guid.getCounter();
       if (ct == ct2) {
         // then all must be equals, else whatever
         return Arrays.equals(bguid, guid.getBytes())? 0 : -1;
@@ -486,8 +486,8 @@ public final class GUID implements Comparable<GUID> {
     if (getVersion() != VERSION) {
       return -1;
     }
-    long time = 0;
-    for (int i = 0; i < TIME_SIZE; i++) {
+    var time = 0L;
+    for (var i = 0; i < TIME_SIZE; i++) {
       time <<= BYTE_SIZE;
       time |= bguid[TIME_POS + i] & BYTE_MASK;
     }

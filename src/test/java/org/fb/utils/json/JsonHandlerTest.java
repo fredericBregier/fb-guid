@@ -18,23 +18,18 @@ package org.fb.utils.json;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.fb.utils.various.TestWatcherJunit4;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
  */
 public class JsonHandlerTest {
-  @Rule(order = Integer.MIN_VALUE)
-  public TestWatcher watchman = new TestWatcherJunit4();
 
   /**
    * Test method for {@link JsonHandler#createObjectNode()}.
@@ -85,11 +80,11 @@ public class JsonHandlerTest {
     assertNotNull(map);
   }
 
-  @Test(expected = JsonProcessingException.class)
+  @Test
   public void testGetFromStringExcBadFormat() throws JsonProcessingException {
     final String badFormat = "{\"foo\":\"bar\",\"baz\"";
 
-    JsonHandler.getFromString(badFormat);
+    assertThrows(JsonProcessingException.class, () -> JsonHandler.getFromString(badFormat));
   }
 
   @Test

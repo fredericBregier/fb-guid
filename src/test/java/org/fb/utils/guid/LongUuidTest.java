@@ -15,22 +15,17 @@
  */
 package org.fb.utils.guid;
 
-import org.fb.utils.various.TestWatcherJunit4;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LongUuidTest {
   private static final int NB = 1000000;
   private static final int NB_THREAD = 10;
-  @Rule(order = Integer.MIN_VALUE)
-  public TestWatcher watchman = new TestWatcherJunit4();
 
   @Test
   public void testStructure() {

@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public final class SingletonUtils {
   private static final byte[] SINGLETON_BYTE_ARRAY = {};
-  private static final InputStream SINGLETON_INPUTSTREAM = new NullInputStream();
+  private static final InputStream SINGLETON_INPUTSTREAM = InputStream.nullInputStream();
   private static final OutputStream SINGLETON_OUTPUTSTREAM = new VoidOutputStream();
 
   private SingletonUtils() {
@@ -88,56 +88,6 @@ public final class SingletonUtils {
    */
   public static OutputStream singletonOutputStream() {
     return SINGLETON_OUTPUTSTREAM;
-  }
-
-  /**
-   * Empty InputStream
-   */
-  private static final class NullInputStream extends InputStream {
-    @Override
-    public int read() {
-      return -1;
-    }
-
-    @Override
-    public int available() {
-      return 0;
-    }
-
-    @Override
-    public void close() {
-      // Empty
-    }
-
-    @Override
-    public void mark(final int readlimit) {//NOSONAR
-      // Empty
-    }
-
-    @Override
-    public boolean markSupported() {
-      return true;
-    }
-
-    @Override
-    public int read(final byte[] bytes, final int off, final int len) {
-      return -1;
-    }
-
-    @Override
-    public int read(final byte[] bytes) {
-      return -1;
-    }
-
-    @Override
-    public void reset() {//NOSONAR
-      // Empty
-    }
-
-    @Override
-    public long skip(final long n) {
-      return 0;
-    }
   }
 
   /**

@@ -18,16 +18,13 @@ package org.fb.utils.guid;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.fb.utils.exceptions.InvalidArgumentRuntimeException;
 import org.fb.utils.json.JsonHandler;
-import org.fb.utils.various.TestWatcherJunit4;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TinyGUIDTest {
   private static final int NB = 1000000;
@@ -53,8 +50,6 @@ public class TinyGUIDTest {
   };
   private static final int VERSION = TinyGUID.VERSION;
   private static final int HEXLENGTH = TinyGUID.KEYSIZE * 2;
-  @Rule(order = Integer.MIN_VALUE)
-  public TestWatcher watchman = new TestWatcherJunit4();
 
   @Test
   public void testStructure() {
@@ -202,11 +197,11 @@ public class TinyGUIDTest {
     }
     final String json = JsonHandler.writeAsString(tinyGUID);
     final TinyGUID uuid2 = JsonHandler.getFromString(json, TinyGUID.class);
-    assertEquals("Json check", tinyGUID, uuid2);
+    assertEquals(tinyGUID, uuid2);
     final TinyGUID tinyGUID2 = new TinyGUID(tinyGUID.getId());
     final String json2 = JsonHandler.writeAsString(tinyGUID2);
     final TinyGUID uuid3 = JsonHandler.getFromString(json2, TinyGUID.class);
-    assertEquals("Json check", tinyGUID, uuid3);
+    assertEquals(tinyGUID, uuid3);
   }
 
   @Test

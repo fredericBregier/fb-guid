@@ -18,16 +18,14 @@ package org.fb.utils.various;
 
 import org.fb.utils.exceptions.InvalidArgumentRuntimeException;
 import org.fb.utils.various.SystemPropertyUtil.Platform;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SystemPropertyUtilTest {
   private static final String OS_NAME = "os.name";
@@ -40,8 +38,6 @@ public class SystemPropertyUtilTest {
   private static final int KEY_IVALUE = 1;
   private static final long KEY_LVALUE = 2L;
   private static final boolean KEY_BVALUE = true;
-  @Rule(order = Integer.MIN_VALUE)
-  public TestWatcher watchman = new TestWatcherJunit4();
 
   @Test
   public final void testSystemPropertyDefault() {

@@ -276,7 +276,7 @@ public final class GuidFactory {
   private byte[] getHeader() {
     final byte[] bytes = new byte[HEADER_SIZE];
     bytes[0] = VERSION & 0xFF;
-    int value = tenantSize - MIN_TENANT;
+    var value = tenantSize - MIN_TENANT;
     value <<= 3;
     value += platformSize - MIN_PLATFORM;
     bytes[SUBSIZE1_POS] = (byte) (value & 0xFF);
@@ -290,12 +290,12 @@ public final class GuidFactory {
   }
 
   private GuidFactory setFromHeader(String encoded64) {
-    final byte[] bytes = BaseXx.getFromBase64(encoded64.substring(0, HEADER_64_SIZE));
-    final int version = bytes[0] & 0xFF;
+    var bytes = BaseXx.getFromBase64(encoded64.substring(0, HEADER_64_SIZE));
+    var version = bytes[0] & 0xFF;
     if (version != VERSION) {
       throw new InvalidArgumentRuntimeException("Incorrect Version");
     }
-    int value = bytes[SUBSIZE1_POS];
+    var value = bytes[SUBSIZE1_POS];
     _setPlatformSize((short) ((value & 0x07) + MIN_PLATFORM));
     value >>>= 3;
     _setTenantSize((short) ((value & 0x07) + MIN_TENANT));
@@ -414,15 +414,15 @@ public final class GuidFactory {
       if (idsource == null) {
         throw new InvalidArgumentRuntimeException("Empty argument");
       }
-      final String id = idsource.trim();
+      var id = idsource.trim();
       if (id.startsWith(ARK)) {
-        String ids = id;
+        var ids = id;
         ids = ids.substring(ARK.length());
-        final int separator = ids.indexOf('/');
+        var separator = ids.indexOf('/');
         if (separator <= 0) {
           throw new InvalidArgumentRuntimeException(ATTEMPTED_TO_PARSE_MALFORMED_ARK_GUID + id);
         }
-        long tenantId;
+        var tenantId = 0L;
         try {
           tenantId = Long.parseLong(ids.substring(0, separator));
         } catch (final NumberFormatException e) {
@@ -434,13 +434,13 @@ public final class GuidFactory {
         // BASE32
         ids = ids.substring(HEADER_64_SIZE);
         try {
-          final byte[] base32 = BaseXx.getFromBase32(ids);
+          var base32 = BaseXx.getFromBase32(ids);
           if (base32.length != guidFactory.keySize - guidFactory.tenantSize - HEADER_SIZE) {
             throw new InvalidArgumentRuntimeException(ATTEMPTED_TO_PARSE_MALFORMED_ARK_GUID + id);
           }
           System.arraycopy(guidFactory.getHeader(), 0, bguid, HEADER_POS, HEADER_SIZE);
           // Guid Tenant
-          for (int pos = TENANT_POS + guidFactory.tenantSize - 1; pos >= TENANT_POS; pos--) {
+          for (var pos = TENANT_POS + guidFactory.tenantSize - 1; pos >= TENANT_POS; pos--) {
             bguid[pos] = (byte) (tenantId & BYTE_MASK);
             tenantId >>>= BYTE_SIZE;
           }
@@ -455,20 +455,20 @@ public final class GuidFactory {
       // Read Base 64 for header
       guidFactory.setFromHeader(id);
       System.arraycopy(guidFactory.getHeader(), 0, bguid, HEADER_POS, HEADER_SIZE);
-      final String ids = id.substring(HEADER_64_SIZE);
-      final int len = id.length();
+      var ids = id.substring(HEADER_64_SIZE);
+      var len = id.length();
       try {
         if (len == guidFactory.key16Size) {
           // HEXA BASE16
-          final byte[] bytes = BaseXx.getFromBase16(ids);
+          var bytes = BaseXx.getFromBase16(ids);
           System.arraycopy(bytes, 0, bguid, TENANT_POS, guidFactory.keySize - HEADER_SIZE);
         } else if (len == guidFactory.key32Size) {
           // BASE32
-          final byte[] bytes = BaseXx.getFromBase32(ids);
+          var bytes = BaseXx.getFromBase32(ids);
           System.arraycopy(bytes, 0, bguid, TENANT_POS, guidFactory.keySize - HEADER_SIZE);
         } else if (len == guidFactory.key64Size) {
           // BASE64
-          final byte[] bytes = BaseXx.getFromBase64(ids);
+          var bytes = BaseXx.getFromBase64(ids);
           System.arraycopy(bytes, 0, bguid, TENANT_POS, guidFactory.keySize - HEADER_SIZE);
         } else {
           throw new InvalidArgumentRuntimeException("Attempted to parse malformed Guid: (" + len + ") " + id);
@@ -503,44 +503,44 @@ public final class GuidFactory {
       // atomically
       guidFactory = factory;
       bguid = new byte[guidFactory.keySize];
-      final long time = System.currentTimeMillis();
-      final int count = getNewCounter(guidFactory.maxCounter);
+      var time = System.currentTimeMillis();
+      var count = getNewCounter(guidFactory.maxCounter);
       // 3 bytes = Version + Encoding (24)
-      final byte[] bytes = guidFactory.getHeader();
+      var bytes = guidFactory.getHeader();
       System.arraycopy(bytes, 0, bguid, HEADER_POS, HEADER_SIZE);
 
       // Tenant
-      long value = tenantId;
-      for (int pos = TENANT_POS + guidFactory.tenantSize - 1; pos >= TENANT_POS; pos--) {
+      var value = tenantId;
+      for (var pos = TENANT_POS + guidFactory.tenantSize - 1; pos >= TENANT_POS; pos--) {
         bguid[pos] = (byte) (value & BYTE_MASK);
         value >>>= BYTE_SIZE;
       }
 
       // Platform
       value = platformId;
-      for (int pos = guidFactory.platformPos + guidFactory.platformSize - 1; pos >= guidFactory.platformPos;
+      for (var pos = guidFactory.platformPos + guidFactory.platformSize - 1; pos >= guidFactory.platformPos;
            pos--) {
         bguid[pos] = (byte) (value & BYTE_MASK);
         value >>>= BYTE_SIZE;
       }
 
       // JVMPID
-      int ivalue = guidFactory.pid;
-      for (int pos = guidFactory.pidPos + guidFactory.pidSize - 1; pos >= guidFactory.pidPos; pos--) {
+      var ivalue = guidFactory.pid;
+      for (var pos = guidFactory.pidPos + guidFactory.pidSize - 1; pos >= guidFactory.pidPos; pos--) {
         bguid[pos] = (byte) (ivalue & BYTE_MASK);
         ivalue >>>= BYTE_SIZE;
       }
 
       // Timestamp
       value = time;
-      for (int pos = guidFactory.timePos + guidFactory.timeSize - 1; pos >= guidFactory.timePos; pos--) {
+      for (var pos = guidFactory.timePos + guidFactory.timeSize - 1; pos >= guidFactory.timePos; pos--) {
         bguid[pos] = (byte) (value & BYTE_MASK);
         value >>>= BYTE_SIZE;
       }
 
       // Counter against collision
       ivalue = count;
-      for (int pos = guidFactory.counterPos + guidFactory.counterSize - 1; pos >= guidFactory.counterPos;
+      for (var pos = guidFactory.counterPos + guidFactory.counterSize - 1; pos >= guidFactory.counterPos;
            pos--) {
         bguid[pos] = (byte) (ivalue & BYTE_MASK);
         ivalue >>>= BYTE_SIZE;
@@ -608,7 +608,7 @@ public final class GuidFactory {
     @JsonIgnore
     public long getTenantId() {
       long value = 0;
-      for (int i = 0; i < guidFactory.tenantSize; i++) {
+      for (var i = 0; i < guidFactory.tenantSize; i++) {
         value <<= BYTE_SIZE;
         value |= bguid[TENANT_POS + i] & BYTE_MASK;
       }
@@ -655,7 +655,7 @@ public final class GuidFactory {
     @JsonIgnore
     public long getPlatformId() {
       long value = 0;
-      for (int i = 0; i < guidFactory.platformSize; i++) {
+      for (var i = 0; i < guidFactory.platformSize; i++) {
         value <<= BYTE_SIZE;
         value |= bguid[guidFactory.platformPos + i] & BYTE_MASK;
       }
@@ -670,7 +670,7 @@ public final class GuidFactory {
     @JsonIgnore
     public int getProcessId() {
       int value = 0;
-      for (int i = 0; i < guidFactory.pidSize; i++) {
+      for (var i = 0; i < guidFactory.pidSize; i++) {
         value <<= BYTE_SIZE;
         value |= bguid[guidFactory.pidPos + i] & BYTE_MASK;
       }
@@ -703,16 +703,16 @@ public final class GuidFactory {
 
     @Override
     public int compareTo(final Guid guid) {
-      final long id = getTenantId();
-      final long id2 = guid.getTenantId();
+      var id = getTenantId();
+      var id2 = guid.getTenantId();
       if (id != id2) {
         return id < id2? -1 : 1;
       }
-      final long ts = getTimestamp();
-      final long ts2 = guid.getTimestamp();
+      var ts = getTimestamp();
+      var ts2 = guid.getTimestamp();
       if (ts == ts2) {
-        final int ct = getCounter();
-        final int ct2 = guid.getCounter();
+        var ct = getCounter();
+        var ct2 = guid.getCounter();
         if (ct == ct2) {
           // then all must be equals, else whatever
           return Arrays.equals(getBytes(), guid.getBytes())? 0 : -1;
@@ -736,7 +736,7 @@ public final class GuidFactory {
         return -1;
       }
       long time = 0;
-      for (int i = 0; i < guidFactory.timeSize; i++) {
+      for (var i = 0; i < guidFactory.timeSize; i++) {
         time <<= BYTE_SIZE;
         time |= bguid[guidFactory.timePos + i] & BYTE_MASK;
       }
@@ -749,7 +749,7 @@ public final class GuidFactory {
     @JsonIgnore
     public int getCounter() {
       int count = 0;
-      for (int i = 0; i < guidFactory.counterSize; i++) {
+      for (var i = 0; i < guidFactory.counterSize; i++) {
         count <<= BYTE_SIZE;
         count |= bguid[guidFactory.counterPos + i] & BYTE_MASK;
       }

@@ -65,14 +65,14 @@ public final class SystemRandomSecure {
     } else {
       System.setProperty("java.security.egd", "file:/dev/./urandom");
       final Provider provider = Security.getProvider("SUN");
-      final String type = "SecureRandom";
-      final String alg = "NativePRNGNonBlocking";
+      var type = "SecureRandom";
+      var alg = "NativePRNGNonBlocking";
       if (provider != null) {
-        final String name = String.format("%s.%s", type, alg);
+        var name = String.format("%s.%s", type, alg);
         final Provider.Service service = provider.getService(type, alg);
         if (service != null) {
           Security.insertProviderAt(
-              new Provider(name, provider.getVersion(), "FB quick fix for SecureRandom using urandom") {
+              new Provider(name, provider.getVersionStr(), "FB quick fix for SecureRandom using urandom") {
                 private static final long serialVersionUID = 1001L;
 
                 {

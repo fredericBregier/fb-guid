@@ -19,18 +19,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.fb.utils.exceptions.InvalidArgumentRuntimeException;
 import org.fb.utils.guid.GuidFactory.Guid;
 import org.fb.utils.various.SysErrLogger;
-import org.fb.utils.various.TestWatcherJunit4;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public abstract class GuidFactoryAbstract {
   static final GuidFactory guidFactory = new GuidFactory();
   private static final int NB = 1000000;
@@ -47,10 +47,8 @@ public abstract class GuidFactoryAbstract {
   private static String BASE64;
   private static String BASEARK;
   private static byte[] BYTES;
-  @Rule(order = Integer.MIN_VALUE)
-  public TestWatcher watchman = new TestWatcherJunit4();
 
-  @Before
+  @BeforeEach
   public void setup() {
     setupGuidFactory();
     final Guid ref = guidFactory.newGuid(10);
@@ -223,12 +221,12 @@ public abstract class GuidFactoryAbstract {
     }
     final String json = guid.getJson();
     System.out.println(json);
-    final Guid uuid2 = guidFactory.getFromJson(json);
-    assertEquals("Json check", guid, uuid2);
+    final Guid uuid2 = GuidFactory.getFromJson(json);
+    assertEquals(guid, uuid2);
     final Guid guid2 = guidFactory.getGuid(guid.getId());
     final String json2 = guid2.getJson();
-    final Guid uuid3 = guidFactory.getFromJson(json2);
-    assertEquals("Json check", guid, uuid3);
+    final Guid uuid3 = GuidFactory.getFromJson(json2);
+    assertEquals(guid, uuid3);
   }
 
   @Test

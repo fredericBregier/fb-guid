@@ -17,54 +17,50 @@
 package org.fb.utils.various;
 
 import org.fb.utils.exceptions.InvalidArgumentRuntimeException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestWatcher;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Parameters Checker Test
  */
 public class ParametersCheckerTest {
-  @Rule(order = Integer.MIN_VALUE)
-  public TestWatcher watchman = new TestWatcherJunit4();
-
+  private final List tocheck = SingletonUtils.singletonList();
 
   @Test
   public final void testCheckParamaterObjectArray() {
     // String
     try {
-      ParametersChecker.checkParameter("test message", (String[]) null);
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkParameter("test message", (String[]) null));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
     }
     try {
-      ParametersChecker.checkParameter("test message", null, "notnull");
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkParameter("test message", null, "notnull"));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
     }
     try {
-      ParametersChecker.checkParameter("test message", "notnull", null);
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkParameter("test message", "notnull", null));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
     }
     try {
-      ParametersChecker.checkParameter("test message", "", "notnull");
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkParameter("test message", "", "notnull"));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
     }
     try {
-      ParametersChecker.checkParameter("test message", "notnull", "");
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkParameter("test message", "notnull", ""));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
     }
     try {
-      ParametersChecker.checkParameter("test message", "notnull", " ");
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkParameter("test message", "notnull", " "));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
     }
     try {
@@ -75,30 +71,30 @@ public class ParametersCheckerTest {
     }
     // Object
     try {
-      ParametersChecker.checkParameter("test message", watchman, watchman);
-      ParametersChecker.checkParameter("test message", watchman, "notnull");
+      ParametersChecker.checkParameter("test message", tocheck, tocheck);
+      ParametersChecker.checkParameter("test message", tocheck, "notnull");
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
       fail("SHOULD_NOT_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
     }
     try {
-      ParametersChecker.checkParameter("test message", (Object) null, " ");
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkParameter("test message", null, " "));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
     }
     try {
-      ParametersChecker.checkParameter("test message", (Object[]) null);
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkParameter("test message", (Object[]) null));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
     }
     final List<String> list = new ArrayList<String>();
     try {
-      ParametersChecker.checkParameter("test message", null, list);
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkParameter("test message", null, list));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
     }
     try {
-      ParametersChecker.checkParameter("test message", list, null);
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkParameter("test message", list, null));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
     }
     try {
@@ -125,9 +121,9 @@ public class ParametersCheckerTest {
     }
     // Object
     try {
-      assertFalse(ParametersChecker.isNotEmpty("test message", watchman, " "));
-      assertTrue(ParametersChecker.isNotEmpty("test message", watchman, "notnull"));
-      assertTrue(ParametersChecker.isNotEmpty("test message", watchman));
+      assertFalse(ParametersChecker.isNotEmpty("test message", tocheck, " "));
+      assertTrue(ParametersChecker.isNotEmpty("test message", tocheck, "notnull"));
+      assertTrue(ParametersChecker.isNotEmpty("test message", tocheck));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
       fail("SHOULD_NOT_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
     }
@@ -142,10 +138,10 @@ public class ParametersCheckerTest {
       assertTrue(ParametersChecker.isEmpty("test message", "", "notnull"));
       assertTrue(ParametersChecker.isEmpty("test message", "notnull", ""));
       assertTrue(ParametersChecker.isEmpty("test message", "notnull", " "));
-      assertTrue(ParametersChecker.isEmpty("test message", watchman, " "));
+      assertTrue(ParametersChecker.isEmpty("test message", tocheck, " "));
       assertFalse(ParametersChecker.isEmpty("test message", "notNull", "notnull"));
       assertFalse(ParametersChecker.isEmpty("test message", "notnull"));
-      assertFalse(ParametersChecker.isEmpty("test message", watchman));
+      assertFalse(ParametersChecker.isEmpty("test message", tocheck));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
       fail("SHOULD_NOT_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
     }
@@ -154,18 +150,18 @@ public class ParametersCheckerTest {
   @Test
   public final void testCheckParamaterNullOnlyObjectArray() {
     try {
-      ParametersChecker.checkParameterNullOnly("test message", (String[]) null);
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkParameterNullOnly("test message", (String[]) null));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
     }
     try {
-      ParametersChecker.checkParameterNullOnly("test message", null, "notnull");
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkParameterNullOnly("test message", null, "notnull"));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
     }
     try {
-      ParametersChecker.checkParameterNullOnly("test message", "notnull", null);
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkParameterNullOnly("test message", "notnull", null));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
     }
     try {
@@ -185,13 +181,13 @@ public class ParametersCheckerTest {
       fail("SHOULD_NOT_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
     }
     try {
-      ParametersChecker.checkParameterNullOnly("test message", watchman, null);
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkParameterNullOnly("test message", tocheck, null));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
     }
     try {
-      ParametersChecker.checkParameterNullOnly("test message", watchman, "notnull");
-      ParametersChecker.checkParameterNullOnly("test message", watchman);
+      ParametersChecker.checkParameterNullOnly("test message", tocheck, "notnull");
+      ParametersChecker.checkParameterNullOnly("test message", tocheck);
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
       fail("SHOULD_NOT_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
     }
@@ -200,8 +196,7 @@ public class ParametersCheckerTest {
   @Test
   public final void testCheckValue() {
     try {
-      ParametersChecker.checkValue("test", 1, 2);
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class, () -> ParametersChecker.checkValue("test", 1, 2));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
       // ok
     }
@@ -212,38 +207,38 @@ public class ParametersCheckerTest {
   @Test
   public final void testSanity() {
     try {
-      ParametersChecker.checkSanityString("test\b");
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkSanityString("test\b"));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
       // ok
     }
     try {
-      ParametersChecker.checkSanityString("test\b", "test");
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkSanityString("test\b", "test"));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
       // ok
     }
     try {
-      ParametersChecker.checkSanityString("test", "test\b");
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkSanityString("test", "test\b"));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
       // ok
     }
     try {
-      ParametersChecker.checkSanityString("test<![CDATA[", "test");
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkSanityString("test" + "<![CDATA[", "test"));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
       // ok
     }
     try {
-      ParametersChecker.checkSanityString("<![CDATA[test", "test");
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkSanityString("<![CDATA[test", "test"));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
       // ok
     }
     try {
-      ParametersChecker.checkSanityString("test<![CDATA[test", "test");
-      fail("SHOULD_RAIZED_ILLEGAL_ARGUMENT_EXCEPTION");
+      assertThrows(InvalidArgumentRuntimeException.class,
+                   () -> ParametersChecker.checkSanityString("test" + "<![CDATA[test", "test"));
     } catch (final InvalidArgumentRuntimeException e) { // NOSONAR
       // ok
     }
@@ -256,8 +251,8 @@ public class ParametersCheckerTest {
   public final void testHasNotEmpty() {
     try {
       assertTrue(ParametersChecker.hasNotEmpty("test\n"));
-      assertTrue(ParametersChecker.hasNotEmpty(watchman, "test\n"));
-      assertTrue(ParametersChecker.hasNotEmpty(watchman, ""));
+      assertTrue(ParametersChecker.hasNotEmpty(tocheck, "test\n"));
+      assertTrue(ParametersChecker.hasNotEmpty(tocheck, ""));
       assertTrue(ParametersChecker.hasNotEmpty("test\n", null));
       assertFalse(ParametersChecker.hasNotEmpty("", " "));
       assertFalse(ParametersChecker.hasNotEmpty(null, " "));
